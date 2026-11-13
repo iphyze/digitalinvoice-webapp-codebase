@@ -23,6 +23,7 @@ const platformService = {
   nrsSandboxHealth: () => api.post('/platform/firs-sandbox-health', {}),
   updateFirsIntegration: (payload) => api.put('/platform/firs-integration', payload),
   updateFirsResource: (payload) => api.put('/platform/firs-resources', payload),
+  syncNrsResource: (key) => api.post('/platform/firs-resources/sync', { resource_key: key }),
   profile: () => api.get('/platform/profile'),
   updateProfile: (payload) => api.put('/platform/profile', payload),
   subscription: (id) => api.get('/platform/subscription', { params: { id } }),

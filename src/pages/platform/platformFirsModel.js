@@ -45,6 +45,7 @@ export function parseFirsOverview(response) {
   }
   return {
     settings: data.settings,
+    assurance: isObject(data.assurance) ? data.assurance : {},
     summary: isObject(data.summary) ? data.summary : {},
     resources: Array.isArray(data.resources) ? data.resources : [],
     recent_logs: Array.isArray(data.recent_logs) ? data.recent_logs : [],

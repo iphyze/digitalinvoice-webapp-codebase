@@ -60,10 +60,12 @@ export default function PlatformFirsIntegration() {
   const [discardOpen, setDiscardOpen] = useState(false)
   const [resourceDraft, setResourceDraft] = useState(null)
   const [savingResource, setSavingResource] = useState(false)
+  const [syncingResource, setSyncingResource] = useState('')
 
   const dirty = useMemo(() => Boolean(form && saved && Object.keys(buildFirsPatch(form, saved, credentials)).length), [form, saved, credentials])
   const flags = overview?.settings?.flags || {}
   const summary = overview?.summary || {}
+  const assurance = overview?.assurance || {}
   const resources = overview?.resources || []
   const logs = overview?.recent_logs || []
   const sensitive = overview?.settings?.sensitive || {}
@@ -186,6 +188,27 @@ export default function PlatformFirsIntegration() {
     } finally { setSavingResource(false) }
   }
 
+  const syncableKeys = new Set(['invoice_types', 'payment_means', 'tax_categories', 'currencies', 'hs_codes', 'service_codes', 'quantity_codes', 'states', 'lgas'])
+  const canSyncResource = canManage && !dirty && !saving && !testing && !syncingResource && Boolean(flags.sandbox_credentials_ready)
+  const syncResource = async (key) => {
+    if (!canSyncResource || !syncableKeys.has(key)) return
+    setSyncingResource(key)
+    setActionError('')
+    setTestMessage('')
+    try {
+      const response = await platformService.syncNrsResource(key)
+      const result = response?.data?.data
+      if (!result?.result?.synced || result.result.source !== 'authenticated_nrs_sandbox' || result.result.invoice_submitted !== false || !result.overview) {
+        throw new Error('Unexpected NRS synchronisation response. No resource status was assumed.')
+      }
+      applyOverview({ data: { data: result.overview } })
+      setTestMessage(`${result.result.entry_count} entries retrieved from the authenticated NRS sandbox for ${key.replaceAll('_', ' ')}. No invoices submitted.`)
+      toast('Official sandbox reference codes retrieved.', 'success', 'Resource synced')
+    } catch (error) {
+      setActionError(getErrorMessage(error, 'NRS resource synchronisation was blocked or unsuccessful. Your existing local codes are unchanged.'))
+    } finally { setSyncingResource('') }
+  }
+
   const logColumns = [
     { key: 'created_at', header: 'Date and time', cell: (log) => <span className="num">{localDateTime(log.created_at)}</span> },
     { key: 'organization_name', header: 'Client', cell: (log) => log.organization_name || 'Platform-wide' },
@@ -203,7 +226,7 @@ export default function PlatformFirsIntegration() {
     <PageHeader eyebrow="Platform administration" title="NRS / MBS integration"
       description="Manage internal integration readiness, encrypted sandbox credentials, local resource catalogues and diagnostics."
       actions={<div className={styles.actions}>
-        <Button variant="secondary" icon={RefreshCw} disabled={loading || saving || testing || savingResource || dirty}
+        <Button variant="secondary" icon={RefreshCw} disabled={loading || saving || testing || savingResource || syncingResource || dirty}
           onClick={load}>Refresh</Button>
         {canManage && dirty ? <Button variant="ghost" onClick={() => setDiscardOpen(true)} disabled={saving}>Discard</Button> : null}
         {canManage && overview ? <Button icon={Save} onClick={save} loading={saving} disabled={!dirty || savingResource}>Save settings</Button> : null}
@@ -282,17 +305,37 @@ export default function PlatformFirsIntegration() {
       </Panel>
 
       <Panel icon={Database} title="Local NRS resource catalogues"
-        description="Imported or manually prepared local options are not certified NRS resource responses.">
+        description="Local entries are unverified. Only an authenticated sandbox sync marks a catalogue as synced; production licensing and clearance are separate.">
+        <p className={styles.muted}>{dirty ? 'Save your configuration before synchronising.' :
+          !flags.sandbox_credentials_ready ? 'Official synchronisation requires an enabled, credentialled NRS sandbox.' :
+            'Sync NRS performs a read-only authenticated sandbox request. Results are imported only after response validation.'}</p>
         <div className={styles.resourceGrid}>
           {resources.length ? resources.map((resource) => <article key={resource.key} className={styles.resource}>
             <div className={styles.resourceTop}><strong>{resource.label || resource.key}</strong><span className={styles.resourceState}>{String(resource.status || 'pending').replaceAll('_', ' ')}</span></div>
             <p>{resource.description || 'Local resource options.'}</p>
             <span className={`${styles.endpoint} ref`}>{resource.endpoint || 'Local resource'}</span>
             <div className={styles.resourceFoot}><span className="num">{Number(resource.entries_count) || 0} entries</span>
-              {canManage ? <Button size="sm" icon={PencilLine} variant="secondary" onClick={() => openResource(resource)}>Manage</Button> : null}
+              {canManage ? <div className={styles.resourceActions}>
+                {syncableKeys.has(resource.key) ? <Button size="sm" icon={RefreshCw} variant="secondary"
+                  loading={syncingResource === resource.key} disabled={!canSyncResource}
+                  onClick={() => syncResource(resource.key)}>Sync NRS</Button> : null}
+                <Button size="sm" icon={PencilLine} variant="secondary"
+                  disabled={Boolean(syncingResource)} onClick={() => openResource(resource)}>Manage</Button>
+              </div> : null}
             </div>
           </article>) : <p className={styles.muted}>No resource catalogues are available yet.</p>}
         </div>
+      </Panel>
+
+      <Panel icon={ShieldAlert} title="Signing and production activation safeguards"
+        description="Checks that must be independently satisfied before a licensed production sender can be developed and activated.">
+        <Alert tone="warning" title="Production transmission remains disabled">
+          A valid ECDSA certificate alone is not a JAdES signature. Independent interoperability testing, a protected HSM/KMS signer, NRS certificate onboarding, verified production credentials and external authorisation are still required.
+        </Alert>
+        <ul className={styles.assuranceList}>
+          {[...(assurance.signing?.issues || []), ...(assurance.production?.issues || [])].map((issue, index) =>
+            <li key={`${index}-${issue}`}>{issue}</li>)}
+        </ul>
       </Panel>
 
       <Panel icon={ServerCog} title="Recent integration diagnostics" description="Last 10 recorded events from the API. This is not an official submission history.">
