@@ -16,6 +16,7 @@ import useToastStore from '../../stores/useToastStore'
 import { getErrorMessage } from '../../utils/httpError'
 import { count, date, label, list, permission, platformRoles, unwrap, validateInvite } from './platformModel'
 import styles from './PlatformAdmin.module.css'
+import PlatformMfaResetDialog from './PlatformMfaResetDialog'
 
 const blankInvite = { name: '', email: '', platform_role: '' }
 const metricIcons = {
@@ -44,6 +45,7 @@ export default function PlatformUsers() {
   const [role, setRole] = useState('')
   const [status, setStatus] = useState('active')
   const [confirmation, setConfirmation] = useState(null)
+  const [mfaTarget, setMfaTarget] = useState(null)
   const load = useCallback(async () => {
     setLoading(true); setError('')
     try { setData(unwrap(await platformService.users(), ['roles', 'users', 'pending_invitations', 'summary'])) }
@@ -93,6 +95,7 @@ export default function PlatformUsers() {
     { key: 'name', header: 'Platform user', cell: (item) => <div className={styles.rowTitle}><strong>{item.name || 'Unnamed user'}</strong><span>{item.email}</span></div> },
     { key: 'role', header: 'Platform role', cell: (item) => item.platform_role_label || label(item.platform_role) },
     { key: 'status', header: 'Status', cell: (item) => <StatusBadge status={item.status} /> },
+    { key: 'mfa', header: 'MFA', cell: (item) => <StatusBadge status={item.mfa_enabled ? 'active' : item.mfa_reenrol_required ? 'pending' : 'inactive'} /> },
     { key: 'last', header: 'Last access', cell: (item) => <span className="num">{date(item.last_accessed_at)}</span> },
   ]
   const pendingColumns = [
@@ -107,7 +110,7 @@ export default function PlatformUsers() {
     <section className={styles.panel}><TextField label="Search platform users" maxLength={120} value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Name, email or role" /></section>
     {!error && <>
       <section className={styles.panel}><div className={styles.panelHeading}><div><h2>Platform users</h2><p>Role and suspension changes revoke affected access. At least one active owner is required.</p></div><UsersRound size={20} aria-hidden="true" /></div>
-        <DataTable columns={columns} rows={users} loading={loading} actions={manager ? (item) => mayEdit(item) ? <div className={styles.rowActions}><Button size="sm" variant="secondary" onClick={() => editUser(item)}>Manage</Button><Button size="sm" variant="danger" onClick={() => { setActionError(''); setConfirmation({ type: 'remove', item }) }}>Remove access</Button></div> : <span className={styles.muted}>Protected account</span> : undefined} empty={<div className={styles.empty}><UsersRound size={26} /><strong>No matching users</strong><p>No platform users match this search.</p></div>} />
+        <DataTable columns={columns} rows={users} loading={loading} actions={manager ? (item) => mayEdit(item) ? <div className={styles.rowActions}><Button size="sm" variant="secondary" onClick={() => editUser(item)}>Manage</Button>{item.mfa_enabled && item.is_active && item.status === 'active' && <Button size="sm" variant="secondary" onClick={() => setMfaTarget(item)}>Reset MFA</Button>}<Button size="sm" variant="danger" onClick={() => { setActionError(''); setConfirmation({ type: 'remove', item }) }}>Remove access</Button></div> : <span className={styles.muted}>Protected account</span> : undefined} empty={<div className={styles.empty}><UsersRound size={26} /><strong>No matching users</strong><p>No platform users match this search.</p></div>} />
       </section>
       <section className={styles.panel}><div className={styles.panelHeading}><div><h2>Pending invitations</h2><p>Invitation URLs are emailed and are not retrievable later.</p></div><ShieldCheck size={20} aria-hidden="true" /></div>
         <DataTable columns={pendingColumns} rows={invitations} loading={loading} actions={manager ? (item) => <div className={styles.rowActions}><Button size="sm" variant="secondary" onClick={() => { setActionError(''); setConfirmation({ type: 'resend', item }) }}>Resend</Button><Button size="sm" variant="danger" onClick={() => { setActionError(''); setConfirmation({ type: 'cancel', item }) }}>Cancel</Button></div> : undefined} empty={<div className={styles.empty}><MailPlus size={25} /><strong>No pending invitations</strong></div>} />
@@ -128,6 +131,7 @@ export default function PlatformUsers() {
       </div>
     </Modal>
     <ConfirmDialog open={Boolean(confirmation)} title={confirmation?.type === 'resend' ? 'Resend platform invitation?' : confirmation?.type === 'cancel' ? 'Cancel platform invitation?' : 'Remove platform access?'} message={confirmation ? `${confirmation.item.name || confirmation.item.email} — ${confirmation.type === 'resend' ? 'the previous link will be invalidated.' : confirmation.type === 'cancel' ? 'the invitation link will stop working.' : 'this account will lose platform access; its workspace membership is unaffected.'}` : ''} variant={confirmation?.type === 'resend' ? 'primary' : 'danger'} confirmLabel={confirmation?.type === 'resend' ? 'Resend invitation' : confirmation?.type === 'cancel' ? 'Cancel invitation' : 'Remove access'} loading={busy} onConfirm={confirmAction} onClose={() => !busy && setConfirmation(null)} />
+    <PlatformMfaResetDialog target={mfaTarget} onClose={() => setMfaTarget(null)} onSuccess={async (notification) => { await load(); toast(notification === 'failed' ? 'MFA reset completed, but the security email was not delivered. Notify the user securely.' : 'User MFA reset successfully. New enrolment required.', notification === 'failed' ? 'warning' : 'success') }} />
     {confirmation && actionError && <Alert tone="danger">{actionError}</Alert>}
   </main>
 }

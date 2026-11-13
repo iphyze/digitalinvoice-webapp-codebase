@@ -35,6 +35,7 @@ const platformService = {
   acceptInvitation: (payload) => api.post('/platform/invitations/accept', payload, { skipAuthRefresh: true, skipCsrf: true }),
   updateUser: (payload) => api.put('/platform/users', payload),
   removeUser: (payload) => api.delete('/platform/users', { data: payload }),
+  resetUserMfa: (payload) => api.post('/platform/users/mfa-reset', payload),
 };
 
 export default platformService;

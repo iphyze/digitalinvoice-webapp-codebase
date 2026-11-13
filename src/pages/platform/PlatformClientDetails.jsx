@@ -16,6 +16,7 @@ import { getErrorMessage } from '../../utils/httpError'
 import { assertCurrencyAmounts, clientAction, count, date, list, money, permission, unwrap } from './platformModel'
 import PlatformCurrencyBreakdown from './PlatformCurrencyBreakdown'
 import styles from './PlatformAdmin.module.css'
+import PlatformMfaResetDialog from './PlatformMfaResetDialog'
 
 const ACTION_COPY = {
   activate: ['Activate workspace?', 'Restore this client account. Subscription requirements will still be enforced.', 'Activate'],
@@ -29,6 +30,7 @@ export default function PlatformClientDetails() {
   const actor = useAuthStore((s) => s.user)
   const toast = useToastStore((s) => s.showToast)
   const canManage = permission(access, actor, 'platform.clients.manage')
+  const canResetMfa = ['owner', 'admin'].includes(access?.platform_role) && permission(access, actor, 'platform.users.manage')
   const [data, setData] = useState(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
@@ -36,6 +38,7 @@ export default function PlatformClientDetails() {
   const [reason, setReason] = useState('')
   const [actionError, setActionError] = useState('')
   const [busy, setBusy] = useState(false)
+  const [mfaTarget, setMfaTarget] = useState(null)
   const load = useCallback(async () => {
     setLoading(true); setError('')
     try {
@@ -69,7 +72,9 @@ export default function PlatformClientDetails() {
     { key: 'name', header: 'User', cell: (item) => <div className={styles.rowTitle}><strong>{item.name || 'Unnamed'}</strong><span>{item.email}</span></div> },
     { key: 'role', header: 'Workspace role', cell: (item) => item.role },
     { key: 'status', header: 'Status', cell: (item) => <StatusBadge status={item.is_active ? 'active' : 'inactive'} /> },
+    { key: 'mfa', header: 'MFA', cell: (item) => <StatusBadge status={item.mfa_enabled ? 'active' : item.mfa_reenrol_required ? 'pending' : 'inactive'} /> },
     { key: 'last_login', header: 'Last login', cell: (item) => <span className="num">{date(item.last_login)}</span> },
+    { key: 'mfa_action', header: 'Security', cell: (item) => canResetMfa && item.mfa_enabled && item.is_active && Number(item.id) !== Number(actor?.id) ? <Button size="sm" variant="secondary" onClick={() => setMfaTarget(item)}>Reset MFA</Button> : <span className={styles.muted}>—</span> },
   ]
   const subColumns = [
     { key: 'plan', header: 'Plan', cell: (item) => <div className={styles.rowTitle}><strong>{item.plan_name}</strong><span>{item.billing_interval}</span></div> },
@@ -108,6 +113,7 @@ export default function PlatformClientDetails() {
         <section className={styles.panel}><div className={styles.panelHeading}><div><h2><Activity size={17} aria-hidden="true" /> Recent activity</h2><p>Latest ten workspace events</p></div></div>{list(data.activity).length ? <ul className={styles.entries}>{data.activity.map((item) => <li key={item.id}><div className={styles.entryMain}><strong>{item.description || item.action}</strong><small>{item.user_name || 'System'} · {date(item.created_at)}</small></div></li>)}</ul> : <div className={styles.empty}><strong>No recent activity</strong></div>}</section>
       </div>
     </>}
+    <PlatformMfaResetDialog target={mfaTarget} onClose={() => setMfaTarget(null)} onSuccess={async (notification) => { await load(); toast(notification === 'failed' ? 'MFA reset completed, but the security email was not delivered. Notify the user securely.' : 'User MFA reset successfully. New enrolment required.', notification === 'failed' ? 'warning' : 'success') }} />
     <Modal open={Boolean(action)} onClose={() => !busy && setAction('')} title={ACTION_COPY[action]?.[0] || 'Update account'} description={ACTION_COPY[action]?.[1]} busy={busy} footer={<div className={styles.footer}><Button variant="secondary" disabled={busy} onClick={() => setAction('')}>Cancel</Button><Button variant={action === 'archive' ? 'danger' : 'primary'} loading={busy} onClick={submit}>{ACTION_COPY[action]?.[2] || 'Confirm'}</Button></div>}>
       <div className={styles.form}><Textarea label="Reason (optional)" value={reason} maxLength={500} rows={3} onChange={(event) => setReason(event.target.value)} helperText="Recorded in the platform activity log. Maximum 500 characters." />{actionError && <Alert tone="danger">{actionError}</Alert>}</div>
     </Modal>
