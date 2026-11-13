@@ -1,0 +1,112 @@
+.field {
+  display: grid;
+  gap: 0.4rem;
+  /* Grid children must be allowed to shrink inside two-column forms. */
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.labelRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.label {
+  color: var(--color-ink);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.labelRow a {
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.control {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  height: var(--control-h);
+  width: 100%;
+  min-width: 0;
+  padding: 0 0.75rem;
+  border: 1px solid var(--color-field-border);
+  border-radius: var(--radius-control);
+  background: var(--color-field-bg);
+  color: var(--color-ink-subtle);
+  transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-base) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+
+.control[data-size='sm'] {
+  height: var(--control-h-sm);
+}
+.control[data-size='lg'] {
+  height: var(--control-h-lg);
+}
+
+.control:hover {
+  border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-line-strong));
+}
+
+/* Soft glow on focus */
+.control:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-primary) 18%, transparent);
+  color: var(--color-primary);
+}
+
+.control[data-invalid] {
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+
+.control[data-invalid]:focus-within {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-danger) 16%, transparent);
+}
+
+.icon {
+  flex-shrink: 0;
+  color: var(--color-field-icon);
+}
+.control:focus-within .icon { color: var(--color-primary); }
+.control[data-invalid] .icon { color: var(--color-danger); }
+
+.input {
+  flex: 1 1 0%;
+  width: 0;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--color-ink);
+  font-size: var(--field-text-size);
+}
+
+.input::placeholder {
+  color: var(--color-ink-subtle);
+}
+
+/* Keep browser autofill on-theme */
+.input:-webkit-autofill {
+  -webkit-text-fill-color: var(--color-ink);
+  box-shadow: 0 0 0 100px var(--color-field-bg) inset;
+  transition: background-color 9999s;
+}
+
+.hint,
+.error {
+  font-size: var(--text-xs);
+}
+
+.hint {
+  color: var(--color-ink-subtle);
+}
+
+.error {
+  color: var(--color-danger);
+  font-weight: 500;
+  animation: fx-enter var(--dur-base) var(--ease-out) both;
+}

@@ -1,0 +1,171 @@
+.page {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  background: var(--color-bg);
+}
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-6);
+}
+.card {
+  align-self: center;
+  justify-self: center;
+  width: min(32rem, calc(100% - 2rem));
+  margin-bottom: 10vh;
+  padding: var(--space-8);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  background: var(--card-fill);
+  box-shadow: var(--shadow-md);
+  text-align: center;
+}
+.icon {
+  display: inline-grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+.section {
+  margin-top: var(--space-4);
+  color: var(--color-ink-subtle);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.title {
+  margin-top: var(--space-1);
+  font-size: var(--text-3xl);
+}
+.body {
+  margin-top: var(--space-3);
+  color: var(--color-ink-muted);
+}
+.path {
+  display: inline-block;
+  margin-top: var(--space-4);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-sunken);
+  color: var(--color-ink-muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-top: var(--space-6);
+}
+
+/* Placeholder that demonstrates the shell without introducing fake business data. */
+.shellPage {
+  min-width: 0;
+  width: 100%;
+  max-width: var(--content-max);
+  margin: 0 auto;
+}
+.shellHeading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 1px 0 21px;
+}
+.shellHeading h1 {
+  font-size: calc(clamp(19px, 2vw, 25px) * var(--font-scale));
+  color: var(--color-ink);
+}
+.shellEyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 700;
+  font-size: calc(10px * var(--font-scale));
+  color: var(--color-ink-muted);
+  margin-bottom: 6px;
+}
+.shellPlaceholder {
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  border-radius: var(--radius-pill);
+  padding: 5px 11px;
+  white-space: nowrap;
+  font-size: calc(11px * var(--font-scale));
+}
+.shellMetrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.shellMetrics section {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  min-height: 113px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  gap: 13px;
+}
+.shellTable {
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  overflow: hidden;
+}
+.shellTableHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 15px;
+  border-bottom: 1px solid var(--color-line);
+}
+.shellTableRow {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 15px;
+  border-bottom: 1px solid var(--color-line);
+}
+.shellTableRow > :last-child {
+  margin-left: auto;
+}
+.shellTableRow:last-child {
+  border-bottom: 0;
+}
+.shellNote {
+  color: var(--color-ink-subtle);
+  font-size: calc(11px * var(--font-scale));
+  text-align: center;
+  margin-top: 14px;
+}
+@media (max-width: 600px) {
+  .shellMetrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .shellMetrics section {
+    min-height: 100px;
+    padding: 14px;
+  }
+  .shellMetrics section:nth-child(3) {
+    display: none;
+  }
+  .shellPlaceholder {
+    display: none;
+  }
+  .shellTableRow {
+    gap: 12px;
+    padding: 13px 10px;
+  }
+  .shellTableRow > :nth-child(3) {
+    display: none;
+  }
+}

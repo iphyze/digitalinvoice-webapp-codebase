@@ -1,0 +1,37 @@
+.feedback {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: calc(var(--z-overlay) + 1);
+  pointer-events: none;
+}
+.progress {
+  display: block;
+  width: 42%;
+  height: 3px;
+  border-radius: 0 var(--radius-pill) var(--radius-pill) 0;
+  background: var(--color-primary);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--color-primary) 45%, transparent);
+  transform-origin: left center;
+  animation: nav-progress 1.4s var(--ease-out) infinite;
+}
+.message {
+  display: block;
+  position: absolute;
+  top: 7px;
+  right: 14px;
+  padding: 7px 11px;
+  background: var(--color-surface-raised);
+  color: var(--color-ink);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-control);
+  box-shadow: var(--shadow-popover);
+  font-size: var(--text-xs);
+}
+@keyframes nav-progress {
+  0% { transform: translateX(-110%) scaleX(0.35); }
+  70% { transform: translateX(140%) scaleX(1); }
+  100% { transform: translateX(300%) scaleX(0.6); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .progress { animation: none; width: 100%; }
+}

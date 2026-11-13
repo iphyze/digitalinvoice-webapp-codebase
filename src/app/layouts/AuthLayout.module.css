@@ -1,0 +1,450 @@
+.layout {
+  --control-h: var(--control-h-lg);
+  --field-text-size: var(--text-md);
+  display: grid;
+  grid-template-columns: minmax(0, 1.16fr) minmax(0, 0.84fr);
+  min-height: 100dvh;
+  background: var(--color-auth-canvas);
+}
+
+/* ---- Form side --------------------------------------------------------------- */
+.formSide {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  padding: var(--space-6) clamp(1.25rem, 4vw, 3rem) var(--space-8);
+  /* Soft colour at the edges gives the form side depth in both themes,
+     without competing with the controls or the branded right panel. */
+  /* White in light mode so the tinted fields stand out (dark mode unchanged) */
+  background-color: var(--color-auth-canvas);
+  background-image:
+    radial-gradient(ellipse 90% 70% at 0% 100%, color-mix(in srgb, var(--color-primary) 11%, transparent), transparent 75%),
+    radial-gradient(ellipse 80% 70% at 100% 0%, color-mix(in srgb, var(--color-accent) 5%, transparent), transparent 80%);
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mobileLogo {
+  visibility: hidden; /* shown when the brand panel is hidden */
+  border-radius: var(--radius-sm);
+}
+
+.formArea {
+  align-self: center;
+  justify-self: center;
+  width: 100%;
+  max-width: 27rem;
+  padding-block: var(--space-6);
+}
+
+.registerArea { max-width: 34rem; padding-block: var(--space-3); }
+
+/* ---- Brand panel ------------------------------------------------------------ */
+.brand {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  margin: var(--space-4);
+  /* Match top and bottom insets to the approved left/right spacing. */
+  padding: clamp(2rem, 4.5vw, 3.5rem);
+  border-radius: 24px;
+  color: #eaf1fb;
+  background: #0a1e45;
+  animation: fx-enter 600ms var(--ease-out) both;
+}
+
+:global([data-theme='dark']) .brand {
+  background: var(--color-band);
+  box-shadow: inset 0 0 0 1px var(--color-line);
+}
+
+/* Fine dot grid concentrated around the product cards */
+.brand::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: radial-gradient(circle, rgb(255 255 255 / 0.12) 1px, transparent 1.6px);
+  background-size: 24px 24px;
+  mask-image: radial-gradient(70% 60% at 80% 72%, #000, transparent 75%);
+  -webkit-mask-image: radial-gradient(70% 60% at 80% 72%, #000, transparent 75%);
+}
+
+/* Drifting light (transform only) */
+.glowA,
+.glowB {
+  position: absolute;
+  z-index: -2;
+  border-radius: 50%;
+  will-change: transform;
+}
+
+.glowA {
+  width: 46rem;
+  height: 46rem;
+  top: -22rem;
+  right: -14rem;
+  background: radial-gradient(closest-side, rgb(36 135 218 / 0.5), transparent);
+  animation: fx-drift 18s var(--ease-in-out) infinite alternate;
+}
+
+.glowB {
+  width: 36rem;
+  height: 36rem;
+  bottom: -20rem;
+  left: -12rem;
+  background: radial-gradient(closest-side, rgb(25 216 164 / 0.26), transparent);
+  animation: fx-drift 22s var(--ease-in-out) -6s infinite alternate-reverse;
+}
+
+.brandLogo {
+  align-self: flex-start;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  /* Visible breathing room after the logo on every auth screen.
+     This belongs to the logo rather than .copy so short-height breakpoints
+     cannot accidentally collapse the spacing. */
+  margin-bottom: clamp(8rem, 15vh, 9rem);
+}
+
+.copy {
+  max-width: 30rem;
+  margin-top: 0;
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: #9fd0ff;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  animation: fx-enter var(--dur-slow) var(--ease-out) 150ms both;
+}
+
+/* Accent line draws in from the left */
+.eyebrow::before {
+  content: '';
+  width: 1.6rem;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #19d8a4, #4a9bff);
+  transform-origin: left;
+  animation: line-draw 700ms var(--ease-out) 200ms both;
+}
+
+.headline {
+  margin-top: var(--space-3);
+  color: #ffffff;
+  font-size: calc(clamp(2rem, 1.2rem + 1.8vw, 2.75rem) * var(--font-scale));
+  line-height: 1.08;
+}
+
+/* Words blur in one after another, then a soft light sweeps across them */
+.word {
+  display: inline-block;
+  white-space: pre;
+  background: linear-gradient(110deg, #ffffff 0%, #ffffff 42%, #9fd0ff 50%, #5ef0c6 54%, #ffffff 62%, #ffffff 100%);
+  background-size: 260% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation:
+    word-in 760ms var(--ease-out) both,
+    sweep 7s var(--ease-in-out) infinite;
+  animation-delay:
+    calc(260ms + var(--w) * 90ms),
+    calc(2200ms + var(--w) * 120ms);
+}
+
+.summary {
+  margin-top: var(--space-3);
+  color: #b7c4da;
+  font-size: var(--text-md);
+  line-height: 1.6;
+  /* Separate, clearly visible on-load rise: no blur, no repeat.
+     Dedicated keyframes make this independent of the shared page animation. */
+  animation: support-slide-up 760ms var(--ease-out) 740ms both;
+}
+
+.values {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+  padding: 0;
+  list-style: none;
+}
+
+.value {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  color: #c9d6ea;
+  font-weight: 600;
+  /* Preserve the original rotating text emphasis, while the entire row
+     (including its icon) makes one distinct on-load slide upward. */
+  animation:
+    support-slide-up 720ms var(--ease-out) both,
+    value-text 7.5s var(--ease-in-out) infinite;
+  animation-delay: 980ms, 2400ms;
+}
+
+/* Explicit stagger timings avoid relying on arithmetic in animation-delay. */
+.value:nth-child(2) {
+  animation-delay: 1170ms, 4900ms;
+}
+
+.value:nth-child(3) {
+  animation-delay: 1360ms, 7400ms;
+}
+
+.valueIcon {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9px;
+  background: rgb(255 255 255 / 0.08);
+  color: #5ef0c6;
+  /* Restore the original sequential icon glow, not a repeating slide. */
+  animation: value-spot 7.5s var(--ease-in-out) 2400ms infinite;
+}
+
+.value:nth-child(2) .valueIcon { animation-delay: 4900ms; }
+.value:nth-child(3) .valueIcon { animation-delay: 7400ms; }
+
+/* Animation is one-way: begin below the layout position, end exactly on it. */
+@keyframes support-slide-up {
+  from { opacity: 0; transform: translate3d(0, 2.25rem, 0); }
+  to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+/* Original three-way spotlight cycle retained from the approved login screen. */
+@keyframes value-spot {
+  0%, 30%, 100% { background: rgb(255 255 255 / 0.08); box-shadow: none; transform: none; }
+  8%, 22% { background: rgb(94 240 198 / 0.18); box-shadow: 0 0 0 4px rgb(94 240 198 / 0.08); transform: scale(1.08); }
+}
+
+@keyframes value-text {
+  0%, 30%, 100% { color: #c9d6ea; }
+  8%, 22% { color: #ffffff; }
+}
+
+@keyframes word-in {
+  from { opacity: 0; filter: blur(8px); transform: translate3d(0, 0.35em, 0); }
+}
+
+@keyframes sweep {
+  0% { background-position: 100% 0; }
+  30%, 100% { background-position: 0% 0; }
+}
+
+@keyframes line-draw {
+  from { transform: scaleX(0); }
+}
+
+/* ---- Floating product cards -------------------------------------------------- */
+/* Flow after the benefit list, aligned toward the LEFT of the narrower right
+   panel (rather than pinned to the bottom/right of a tall auth panel). */
+.cards {
+  position: relative;
+  align-self: flex-start;
+  flex: 0 0 auto;
+  width: min(21rem, 100%);
+  height: 15.5rem;
+  /* Breathing room between the third benefit and the invoice preview. */
+  margin-top: clamp(2.25rem, 4.5vh, 3rem);
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.cardWrap {
+  position: absolute;
+  top: 0;
+  right: 0;
+  animation: fx-enter 700ms var(--ease-out) 420ms both;
+}
+
+.toastWrap {
+  top: auto;
+  right: auto;
+  bottom: 0;
+  left: 0;
+  animation-delay: 900ms;
+}
+
+.card {
+  border-radius: 14px;
+  background: #ffffff;
+  color: #0a1e45;
+  box-shadow: 0 30px 60px -20px rgb(0 0 0 / 0.55);
+  animation: fx-float 6s var(--ease-in-out) infinite;
+}
+
+:global([data-theme='dark']) .card {
+  background: var(--color-surface);
+  color: #eaf1fb;
+  box-shadow: 0 30px 60px -20px rgb(0 0 0 / 0.7), inset 0 0 0 1px var(--color-line);
+}
+
+.invoice {
+  width: 18.5rem;
+  padding: 1rem 1.1rem;
+}
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: calc(0.8125rem * var(--font-scale));
+  font-weight: 700;
+}
+
+.badge {
+  padding: 0.1rem 0.55rem;
+  border-radius: var(--radius-pill);
+  background: #e2f6ee;
+  color: #0b7f57;
+  font-size: calc(0.72rem * var(--font-scale));
+}
+
+:global([data-theme='dark']) .badge {
+  background: #0c2e25;
+  color: #3ddc97;
+}
+
+.cardMeta {
+  margin-top: 0.25rem;
+  color: #5a6987;
+  font-size: calc(0.75rem * var(--font-scale));
+}
+
+:global([data-theme='dark']) .cardMeta,
+:global([data-theme='dark']) .toast p {
+  color: #8494b2;
+}
+
+.amount {
+  display: block;
+  margin-top: 0.5rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: calc(1.5rem * var(--font-scale));
+  letter-spacing: -0.02em;
+}
+
+.bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.375rem;
+  height: 3.4rem;
+  margin-top: 0.75rem;
+}
+
+.bars i {
+  flex: 1;
+  height: var(--h);
+  border-radius: 4px 4px 1px 1px;
+  background: linear-gradient(180deg, #19d8a4, #2295d0);
+  transform-origin: bottom;
+  animation: bar-grow 700ms var(--ease-out) both;
+  animation-delay: calc(700ms + var(--i) * 60ms);
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 17rem;
+  padding: 0.75rem 0.9rem;
+  animation-delay: -2.5s;
+}
+
+.toast strong {
+  font-size: calc(0.8125rem * var(--font-scale));
+}
+
+.toast p {
+  color: #5a6987;
+  font-size: calc(0.72rem * var(--font-scale));
+}
+
+.toastIcon {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 10px;
+  background: linear-gradient(160deg, #19d8a4, #2295d0);
+  color: #ffffff;
+}
+
+@keyframes bar-grow {
+  from { transform: scaleY(0); }
+}
+
+/* Keep the right-panel illustration directly below the list in shorter
+   browser windows too. Tighten vertical rhythm rather than hiding it. */
+@media (min-width: 1024px) and (max-height: 800px) {
+  .brandLogo { margin-bottom: clamp(6rem, 12vh, 7.5rem); }
+  .values { gap: var(--space-2); margin-top: var(--space-4); }
+  .cards {
+    height: 15.5rem;
+    margin-top: var(--space-6);
+    transform: scale(0.87);
+    transform-origin: top left;
+  }
+}
+
+/* At laptop-height viewports the left registration form can make the
+   panel taller than the viewport. Keep the full payment notification above
+   the fold without anchoring it to the screen's bottom. */
+@media (min-width: 1024px) and (max-height: 740px) {
+  .brandLogo { margin-bottom: 6rem; }
+  .cards {
+    margin-top: 1.75rem;
+    transform: scale(0.8);
+  }
+}
+
+@media (min-width: 1024px) and (max-height: 650px) {
+  .brandLogo { margin-bottom: 5rem; }
+  .cards {
+    height: 15.5rem;
+    transform: scale(0.76);
+  }
+}
+
+/* Reduced motion: display supporting copy and icons immediately. */
+@media (prefers-reduced-motion: reduce) {
+  .summary,
+  .value,
+  .valueIcon {
+    animation: none;
+  }
+}
+
+/* ---- Narrow: form only --------------------------------------------------------- */
+@media (max-width: 1023px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .brand {
+    display: none;
+  }
+
+  .mobileLogo {
+    visibility: visible;
+  }
+}

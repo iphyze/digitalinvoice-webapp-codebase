@@ -1,0 +1,69 @@
+/* One icon-and-copy layout for the plain KPI cards used throughout the app. */
+.card {
+  min-width: 0;
+  min-height: 104px;
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+  padding: 17px 18px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  background: var(--card-fill);
+  box-shadow: var(--shadow-sm);
+}
+.icon {
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  color: var(--color-info);
+  background: var(--color-info-soft);
+  border-radius: var(--radius-control);
+}
+.card[data-tone='green'] .icon,
+.card[data-tone='teal'] .icon {
+  color: var(--color-success);
+  background: var(--color-success-soft);
+}
+.card[data-tone='amber'] .icon {
+  color: var(--color-warning);
+  background: var(--color-warning-soft);
+}
+.card[data-tone='red'] .icon {
+  color: var(--color-danger);
+  background: var(--color-danger-soft);
+}
+.card[data-tone='violet'] .icon {
+  color: var(--color-ink-muted);
+  background: var(--color-hover);
+}
+.body {
+  min-width: 0;
+  flex: 1;
+  display: grid;
+  align-content: start;
+  gap: 5px;
+}
+.label {
+  font-size: var(--text-xs);
+  color: var(--color-ink-muted);
+  line-height: 1.45;
+}
+.value {
+  font-size: clamp(var(--text-md), 1.35vw, var(--text-xl));
+  line-height: 1.3;
+  font-weight: 680;
+  color: var(--color-ink);
+  overflow-wrap: break-word;
+}
+.note {
+  font-size: var(--text-xs);
+  line-height: 1.55;
+  font-weight: 400;
+  color: var(--color-ink-muted);
+}
+@media (max-width: 440px) {
+  .card { gap: 10px; padding: 14px; }
+  .icon { flex-basis: 34px; width: 34px; height: 34px; }
+}

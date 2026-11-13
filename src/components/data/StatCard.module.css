@@ -1,0 +1,60 @@
+.card {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-width: 0;
+  padding: 19px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  background: var(--card-fill);
+  box-shadow: var(--shadow-xs);
+}
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  min-height: 34px;
+}
+.icon {
+  display: grid;
+  place-items: center;
+  width: 35px;
+  height: 35px;
+  border-radius: var(--radius-control);
+  color: var(--color-info);
+  background: var(--color-info-soft);
+}
+.card[data-tone='teal'] .icon,
+.card[data-tone='green'] .icon {
+  color: var(--color-success);
+  background: var(--color-success-soft);
+}
+.card[data-tone='amber'] .icon {
+  color: var(--color-warning);
+  background: var(--color-warning-soft);
+}
+.card[data-tone='red'] .icon {
+  color: var(--color-danger);
+  background: var(--color-danger-soft);
+}
+.card[data-tone='violet'] .icon {
+  color: var(--color-ink-muted);
+  background: var(--color-hover);
+}
+.note {
+  color: var(--color-ink-muted);
+  font-size: var(--text-xs);
+  text-align: right;
+}
+.label {
+  color: var(--color-ink-muted);
+  font-size: var(--text-sm);
+}
+.value {
+  color: var(--color-ink);
+  font-size: clamp(16px, 1.5vw, 23px);
+  font-weight: 670;
+  letter-spacing: -0.025em;
+  overflow-wrap: anywhere;
+}

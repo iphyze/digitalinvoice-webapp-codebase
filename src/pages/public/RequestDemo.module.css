@@ -1,0 +1,121 @@
+/* Request demo: approved Sample A (hero continuation of the Landing page).
+   The navy band stays navy in both themes, like the Landing hero. */
+.page {
+  min-height: 100dvh;
+  padding: 0 clamp(16px, 4vw, 56px) 24px;
+  background: var(--color-bg);
+  color: var(--color-ink);
+}
+
+.band {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  width: min(100%, 1330px);
+  margin: 0 auto;
+  border-radius: 28px;
+  background: linear-gradient(135deg, var(--marketing-navy-start), var(--marketing-navy-middle) 45%, var(--marketing-navy-end));
+  color: var(--marketing-text);
+  animation: fx-enter 600ms var(--ease-out) both;
+}
+
+:global([data-theme='dark']) .band {
+  background: linear-gradient(135deg, var(--marketing-dark-start), var(--marketing-dark-middle) 45%, var(--marketing-dark-end));
+  box-shadow: inset 0 0 0 1px var(--color-line);
+}
+
+/* Fine dot grid behind the form */
+.band::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: radial-gradient(circle, rgb(255 255 255 / 0.1) 1px, transparent 1.6px);
+  background-size: 24px 24px;
+  mask-image: radial-gradient(60% 70% at 75% 50%, #000, transparent 75%);
+  -webkit-mask-image: radial-gradient(60% 70% at 75% 50%, #000, transparent 75%);
+}
+
+.glowA, .glowB { position: absolute; z-index: -2; border-radius: 50%; will-change: transform; }
+.glowA {
+  width: 44rem; height: 44rem; top: -20rem; right: -12rem;
+  background: radial-gradient(closest-side, rgb(36 135 218 / 0.45), transparent);
+  animation: fx-drift 18s var(--ease-in-out) infinite alternate;
+}
+.glowB {
+  width: 34rem; height: 34rem; bottom: -18rem; left: -10rem;
+  background: radial-gradient(closest-side, rgb(25 216 164 / 0.22), transparent);
+  animation: fx-drift 22s var(--ease-in-out) -6s infinite alternate-reverse;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(2rem, 5vw, 4rem);
+  align-items: center;
+  padding: clamp(2rem, 4.5vw, 3.5rem);
+}
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--marketing-highlight);
+  font-size: var(--text-xs);
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.eyebrow::before {
+  content: '';
+  width: 28px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #19d8a4, #4a9bff);
+}
+
+.copy h1 {
+  margin-top: var(--space-4);
+  color: var(--marketing-heading);
+  font-size: calc(clamp(2.1rem, 1.2rem + 2.2vw, 2.9rem) * var(--font-scale));
+  line-height: 1.08;
+}
+
+.description {
+  max-width: 30rem;
+  margin-top: var(--space-4);
+  color: var(--marketing-copy);
+  font-size: var(--text-md);
+  line-height: 1.65;
+}
+
+.benefits { display: grid; gap: var(--space-3); margin-top: var(--space-8); padding: 0; list-style: none; font-weight: 600; }
+.benefits li { display: flex; align-items: center; gap: var(--space-3); }
+.benefitIcon {
+  display: grid; place-items: center; width: 2.1rem; height: 2.1rem; border-radius: 10px;
+  background: rgb(255 255 255 / 0.08); color: var(--marketing-accent);
+}
+
+.card {
+  padding: clamp(1.25rem, 2.5vw, 1.9rem);
+  border: 1px solid var(--color-line);
+  border-radius: 20px;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-lg);
+  color: var(--color-ink);
+  --fx-delay: 160ms;
+}
+
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
+.span { grid-column: 1 / -1; }
+.submit { margin-top: var(--space-6); }
+
+@media (max-width: 1023px) {
+  .content { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  .band { border-radius: 21px; }
+  .content { padding: 1.75rem 1.1rem 1.25rem; gap: 1.75rem; }
+  .grid { grid-template-columns: 1fr; }
+}

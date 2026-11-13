@@ -1,0 +1,306 @@
+.page {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+  padding-bottom: 20px;
+}
+.headerActions {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 13px;
+}
+.customerCell {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  min-width: 0;
+}
+.avatar {
+  width: 33px;
+  height: 33px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  border-radius: 9px;
+  background: var(--color-primary-soft);
+  color: var(--color-info);
+  font: 600 calc(14px * var(--font-scale)) var(--font-display);
+}
+.customerText {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+.customerText a {
+  color: var(--color-ink);
+  font-weight: 700;
+  text-decoration: none;
+  overflow-wrap: break-word;
+}
+.customerText a:hover {
+  color: var(--color-info);
+  text-decoration: underline;
+}
+.customerText small,
+.twoLines small {
+  font-size: calc(11px * var(--font-scale));
+  color: var(--color-ink-subtle);
+}
+.type {
+  font-size: calc(11px * var(--font-scale));
+  font-weight: 600;
+  color: var(--color-ink-muted);
+  background: var(--color-hover);
+  padding: 5px 7px;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+.twoLines {
+  display: grid;
+  gap: 4px;
+  max-width: 230px;
+  overflow-wrap: break-word;
+}
+.location {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--color-ink-muted);
+  white-space: normal;
+}
+.location svg {
+  flex-shrink: 0;
+  color: var(--color-ink-subtle);
+}
+.rowActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 5px;
+}
+.iconAction {
+  border: 1px solid var(--color-line);
+  display: grid;
+  place-items: center;
+  background: var(--color-surface);
+  color: var(--color-ink-muted);
+  border-radius: 7px;
+  width: 31px;
+  height: 31px;
+  cursor: pointer;
+  text-decoration: none;
+}
+.iconAction:hover {
+  background: var(--color-hover);
+  color: var(--color-info);
+}
+.iconAction.danger {
+  color: var(--color-danger);
+}
+.iconAction:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+.empty {
+  padding: 44px 20px;
+  text-align: center;
+  background: var(--card-fill);
+  color: var(--color-ink-muted);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card, 10px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+.empty > svg {
+  color: var(--color-info);
+}
+.empty button svg {
+  color: inherit;
+}
+.empty h2 {
+  font: 600 calc(18px * var(--font-scale)) / 1.35 var(--font-display);
+  color: var(--color-ink);
+  margin: 0;
+}
+.empty p {
+  font-size: calc(13px * var(--font-scale));
+  max-width: 410px;
+  margin: 0;
+}
+.empty button {
+  margin-top: 5px;
+}
+@media (max-width: 880px) {
+  .stats {
+    gap: 8px;
+  }
+}
+@media (max-width: 640px) {
+  .page {
+    gap: 12px;
+  }
+  .stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .headerActions {
+    gap: 7px;
+  }
+  .type {
+    display: inline-block;
+    white-space: normal;
+  }
+  .twoLines {
+    font-size: calc(11px * var(--font-scale));
+  }
+  .location {
+    font-size: calc(11px * var(--font-scale));
+  }
+}
+@media (max-width: 420px) {
+  .stats {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.heading {
+  margin-bottom: 0;
+}
+.mobileTop {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  min-width: 0;
+}
+.mobileTop .customerText {
+  flex: 1;
+}
+.mobileTop .customerText a {
+  font-size: calc(13px * var(--font-scale));
+}
+.mobileTop .avatar {
+  width: 35px;
+  height: 35px;
+}
+.mobileSubtitle {
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+  align-items: center;
+  margin: 12px 0 9px;
+  color: var(--color-ink-muted);
+  font-size: calc(11px * var(--font-scale));
+  flex-wrap: wrap;
+}
+.mobileSubtitle span {
+  color: var(--color-ink-subtle);
+}
+.mobileBottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px solid var(--color-line);
+}
+.mobileBottom > span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: calc(11px * var(--font-scale));
+  color: var(--color-ink-muted);
+}
+.mobileBottom .rowActions {
+  gap: 4px;
+}
+.mobileBottom .iconAction {
+  width: 28px;
+  height: 28px;
+}
+
+/* The custom empty state's primary action also needs a white plus icon in
+   light mode: the standalone empty-state icon remains blue. */
+.empty button {
+  font-size: max(var(--button-min-font), calc(var(--text-sm) * var(--button-token-ratio)));
+}
+/* The view (eye) action is intentionally borderless; keyboard focus stays outlined. */
+.viewAction {
+  border-color: transparent;
+  background: transparent;
+}
+.viewAction:hover {
+  background: var(--color-hover);
+}
+.itemCell,
+.mobileTop {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.itemText {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+.itemText a {
+  color: var(--color-ink);
+  font-size: calc(13px * var(--font-scale));
+  font-weight: 700;
+  text-decoration: none;
+  overflow-wrap: break-word;
+}
+.itemText a:hover {
+  color: var(--color-info);
+  text-decoration: underline;
+}
+.itemText small,
+.twoLines small {
+  color: var(--color-ink-subtle);
+  font-size: calc(11px * var(--font-scale));
+}
+.avatar[data-type='service'] {
+  background: var(--color-success-soft);
+  color: var(--color-success);
+}
+.avatar[data-type='product'] {
+  background: var(--color-primary-soft);
+  color: var(--color-info);
+}
+.twoLines strong {
+  color: var(--color-ink);
+  font-size: calc(13px * var(--font-scale));
+}
+.mobileTop .itemText {
+  flex: 1;
+}
+.mobileMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 12px 0;
+  color: var(--color-ink-muted);
+  font-size: calc(12px * var(--font-scale));
+}
+.mobileMeta strong {
+  font-size: calc(12px * var(--font-scale));
+  color: var(--color-ink);
+}
+.mobileBottom {
+  font-size: calc(11px * var(--font-scale));
+  color: var(--color-ink-muted);
+}
+@media (max-width: 1180px) {
+  .stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+

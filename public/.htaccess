@@ -1,0 +1,45 @@
+# DigitalInvoice (Vite + React single-page app) on cPanel / Apache
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Assets requested under a nested path (e.g. /app/assets/x.js) -> /assets/x.js
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^[^/]+/assets/(.+)$ /assets/$1 [L]
+
+  # Every app address (/app/invoices/123, /portal/TOKEN, ...) -> index.html;
+  # React Router reads the address and shows the right screen.
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
+
+<IfModule mod_headers.c>
+  # Hashed build files never change: cache for a year
+  <FilesMatch "\.(js|css|woff2|svg|png|ico|webp)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  # The non-hashed theme bootstrap must not be cached immutably.
+  <Files "theme-init.js">
+    Header set Cache-Control "no-cache"
+  </Files>
+  # index.html must always be fresh so new deployments show up immediately
+  <FilesMatch "^(index\.html|site\.webmanifest)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Frame-Options "DENY"
+  # Mirrors the old frontend NRS security policy. All scripts are external:
+  # local Vite bundle, Google Identity Services and Paystack checkout only.
+  # IMPORTANT: Update https://api.teecomsintegratedsolutions.ng if VITE_API_BASE_URL points
+  # to a different API origin (and include any other required trusted endpoints).
+  Header always set Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://checkout.paystack.com https://*.paystack.co; script-src 'self' 'wasm-unsafe-eval' https://accounts.google.com https://*.gstatic.com https://js.paystack.co https://*.paystack.co; style-src 'self' 'unsafe-inline' https://accounts.google.com https://*.gstatic.com; img-src 'self' data: blob: https://api.teecomsintegratedsolutions.ng https://accounts.google.com https://*.gstatic.com https://*.googleusercontent.com https://*.paystack.co; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' data: https://api.teecomsintegratedsolutions.ng https://accounts.google.com https://*.googleapis.com https://api.paystack.co https://*.paystack.co; frame-src https://accounts.google.com https://*.google.com https://*.paystack.co https://checkout.paystack.com; worker-src 'self' blob:; upgrade-insecure-requests"
+</IfModule>
+
+<IfModule mime_module>
+  AddType application/manifest+json .webmanifest
+  AddType font/woff2 .woff2
+</IfModule>

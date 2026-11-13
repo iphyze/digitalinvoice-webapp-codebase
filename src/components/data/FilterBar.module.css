@@ -1,0 +1,149 @@
+.bar {
+  min-width: 0;
+  background: var(--card-fill);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card, 10px);
+  padding: 10px 12px;
+}
+/* Share the available space across all three controls. Previously the search
+   flexed to fill the row while both selects stayed fixed at 185px. */
+.controls {
+  display: grid;
+  grid-template-columns: minmax(220px, 1.05fr) repeat(2, minmax(210px, 1fr));
+  gap: 12px;
+  align-items: center;
+  min-width: 0;
+}
+.search {
+  min-width: 0;
+  width: 100%;
+  height: var(--control-h);
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  color: var(--color-ink-subtle);
+  padding: 0 12px;
+  background: var(--color-field-bg);
+  border: 1px solid var(--color-field-border);
+  border-radius: var(--radius-control, 8px);
+}
+.search > svg {
+  flex: 0 0 auto;
+  color: var(--color-field-icon);
+}
+.search:focus-within > svg {
+  color: var(--color-primary);
+}
+.search:focus-within {
+  border-color: var(--color-focus);
+  outline: 2px solid var(--color-primary-soft);
+}
+.search input {
+  min-width: 0;
+  flex: 1;
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--color-ink);
+  font: inherit;
+  font-size: var(--text-sm);
+}
+.search input::placeholder {
+  color: var(--color-ink-subtle);
+}
+.select {
+  width: 100%;
+  min-width: 0;
+}
+.updating {
+  grid-column: 1 / -1;
+  justify-self: end;
+  font-size: calc(11px * var(--font-scale));
+  color: var(--color-ink-muted);
+}
+.chips {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+  border-top: 1px solid var(--color-line);
+  margin-top: 10px;
+  padding-top: 10px;
+}
+.chip {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  border: 0;
+  border-radius: 20px;
+  padding: 5px 10px;
+  background: var(--color-primary-soft);
+  color: var(--color-info);
+  font-family: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  font-size: max(var(--button-min-font), calc(1em * var(--button-token-ratio)));
+  font-size: max(var(--button-min-font), calc(11px * var(--button-font-scale)));
+  cursor: pointer;
+}
+.reset {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 0;
+  background: transparent;
+  color: var(--color-ink-muted);
+  font-family: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  font-size: max(var(--button-min-font), calc(1em * var(--button-token-ratio)));
+  font-size: max(var(--button-min-font), calc(11px * var(--button-font-scale)));
+  cursor: pointer;
+  padding: 5px;
+}
+.chip:hover,
+.reset:hover {
+  filter: brightness(0.95);
+}
+.chip:focus-visible,
+.reset:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+@media (max-width: 940px) {
+  .controls {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+  }
+  .search {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 430px) {
+  .bar {
+    padding: 9px;
+  }
+  .controls {
+    gap: 8px;
+  }
+  .select {
+    min-width: 0;
+  }
+}
+/* Two full-length filter labels do not fit comfortably side by side on phones. */
+@media (max-width: 520px) {
+  .controls {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .search {
+    grid-column: auto;
+  }
+}

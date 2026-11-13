@@ -1,0 +1,344 @@
+.page {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+  padding-bottom: 24px;
+}
+/* The five invoice KPIs are scoped: counts for this page are not implied global totals. */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+.filters {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+.dateFilters {
+  min-width: 0;
+  display: flex;
+  gap: 12px;
+  align-items: end;
+  padding: 12px 14px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  background: linear-gradient(
+    125deg,
+    color-mix(in srgb, var(--color-hover) 24%, var(--color-surface)),
+    var(--color-surface) 83%
+  );
+}
+.dateField {
+  min-width: 0;
+  width: min(100%, 225px);
+  display: grid;
+  gap: 6px;
+}
+.dateField > span {
+  font-size: calc(11px * var(--font-scale));
+  color: var(--color-ink-muted);
+  font-weight: 600;
+}
+.dateField > div {
+  min-width: 0;
+}
+.clearDates {
+  height: var(--control-h);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 11px;
+  font: 500 max(var(--button-min-font), calc(12px * var(--button-font-scale))) var(--font-sans);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+  color: var(--color-ink-muted);
+  cursor: pointer;
+}
+.clearDates:hover {
+  background: var(--color-hover);
+  color: var(--color-ink);
+}
+.twoLines {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+  max-width: 260px;
+  overflow-wrap: break-word;
+  font-size: calc(12px * var(--font-scale));
+}
+.twoLines strong {
+  font-size: calc(12px * var(--font-scale));
+  color: var(--color-ink);
+  font-weight: 650;
+}
+.twoLines small {
+  font-size: calc(11px * var(--font-scale));
+  color: var(--color-ink-subtle);
+}
+.invoiceLink {
+  font-weight: 700;
+  color: var(--color-ink);
+  text-decoration: none;
+}
+.invoiceLink:hover {
+  color: var(--color-info);
+  text-decoration: underline;
+}
+.invoiceLink:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
+}
+.rowActions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 5px;
+}
+.iconAction {
+  width: 31px;
+  height: 31px;
+  border: 1px solid var(--color-line);
+  border-radius: 7px;
+  background: var(--color-surface);
+  color: var(--color-ink-muted);
+  display: grid;
+  place-items: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+.iconAction:hover {
+  background: var(--color-hover);
+  color: var(--color-info);
+}
+.iconAction:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+.viewAction {
+  border-color: transparent;
+  background: transparent;
+}
+.danger {
+  color: var(--color-danger);
+}
+.empty {
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  background: linear-gradient(
+    130deg,
+    color-mix(in srgb, var(--color-primary-soft) 17%, var(--color-surface)),
+    var(--color-surface) 60%
+  );
+  min-height: 275px;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--color-ink-muted);
+}
+.empty > svg {
+  color: var(--color-info);
+}
+.empty h2 {
+  margin: 0;
+  font: 600 calc(18px * var(--font-scale)) / 1.3 var(--font-display);
+  color: var(--color-ink);
+}
+.empty p {
+  margin: 0;
+  font-size: calc(13px * var(--font-scale));
+  max-width: 420px;
+}
+.empty button,
+.empty a {
+  margin-top: 6px;
+}
+.mobileTop,
+.mobileRow,
+.mobileFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
+  min-width: 0;
+}
+.mobileInvoice {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.mobileInvoice a {
+  color: var(--color-ink);
+  font-weight: 700;
+  text-decoration: none;
+  overflow-wrap: break-word;
+}
+.mobileInvoice small {
+  color: var(--color-ink-muted);
+  font-size: calc(11px * var(--font-scale));
+  overflow-wrap: break-word;
+}
+.mobileRow {
+  margin: 12px 0 10px;
+}
+.mobileRow strong {
+  font-size: calc(14px * var(--font-scale));
+  color: var(--color-ink);
+}
+.mobileRow span {
+  font-size: calc(11px * var(--font-scale));
+  color: var(--color-ink-muted);
+}
+.mobileChips {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.mobileFooter {
+  border-top: 1px solid var(--color-line);
+  padding-top: 9px;
+  margin-top: 10px;
+}
+.mobileFooter > span {
+  font-size: calc(11px * var(--font-scale));
+  color: var(--color-ink-subtle);
+}
+@media (max-width: 1320px) {
+  .stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .stats > :last-child {
+    grid-column: span 2;
+  }
+}
+@media (max-width: 690px) {
+  .stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .stats > :last-child {
+    grid-column: 1 / -1;
+  }
+  .dateFilters {
+    flex-wrap: wrap;
+    gap: 9px;
+  }
+  .dateField {
+    flex: 1 1 170px;
+    width: auto;
+  }
+}
+@media (max-width: 400px) {
+  .page {
+    gap: 12px;
+  }
+  .dateField {
+    flex-basis: 100%;
+  }
+  .clearDates {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Local NRS queue monitoring: not proof of external submission or clearance. */
+.queueNotice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 15px 16px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  background: var(--card-fill);
+  color: var(--color-ink);
+}
+.queueNotice[data-state='overdue'],
+.queueNotice[data-state='error'] {
+  border-color: color-mix(in srgb, var(--color-warning) 45%, var(--color-line));
+  background: color-mix(in srgb, var(--color-warning-soft) 40%, var(--color-surface));
+}
+.queueNoticeIcon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 37px;
+  height: 37px;
+  border-radius: 10px;
+  color: var(--color-info);
+  background: var(--color-info-soft);
+}
+.queueNotice[data-state='overdue'] .queueNoticeIcon,
+.queueNotice[data-state='error'] .queueNoticeIcon {
+  color: var(--color-warning);
+  background: var(--color-warning-soft);
+}
+.queueNoticeBody {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+}
+.queueNoticeBody strong {
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  font-weight: 650;
+}
+.queueNoticeBody p {
+  margin: 0;
+  color: var(--color-ink-muted);
+  font-size: var(--text-xs);
+  line-height: 1.55;
+}
+.queueNoticeBody small {
+  font-size: calc(11px * var(--font-scale));
+  color: var(--color-ink-subtle);
+  line-height: 1.5;
+}
+.queueNotice > button {
+  flex: 0 0 auto;
+}
+.queueCell {
+  display: grid;
+  justify-items: start;
+  align-content: start;
+  gap: 6px;
+  min-width: 0;
+}
+.queueCell small {
+  font-size: calc(10.5px * var(--font-scale));
+  line-height: 1.45;
+  color: var(--color-ink-muted);
+  overflow-wrap: anywhere;
+}
+.queueCell .queueDeadline {
+  color: var(--color-ink-subtle);
+}
+.queueCell .queueDeadlineOverdue {
+  color: var(--color-danger);
+  font-weight: 650;
+}
+.mobileQueue {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--color-line);
+}
+@media (max-width: 690px) {
+  .queueNotice {
+    padding: 12px;
+    gap: 9px;
+    flex-wrap: wrap;
+  }
+  .queueNoticeIcon {
+    width: 33px;
+    height: 33px;
+  }
+  .queueNotice > button {
+    margin-left: 42px;
+  }
+}

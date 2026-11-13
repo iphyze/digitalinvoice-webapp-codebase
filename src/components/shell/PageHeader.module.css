@@ -1,0 +1,48 @@
+.heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  min-width: 0;
+  margin-bottom: 22px;
+}
+.copy {
+  min-width: 0;
+}
+.copy h1 {
+  color: var(--color-ink);
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  font-size: calc(clamp(21px, 2.15vw, 29px) * var(--font-scale));
+}
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 700;
+  color: var(--color-ink-muted);
+  font-size: calc(10px * var(--font-scale));
+  margin-bottom: 6px;
+}
+.description {
+  color: var(--color-ink-muted);
+  margin-top: 6px;
+  font-size: calc(13px * var(--font-scale));
+}
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+}
+@media (max-width: 600px) {
+  .heading {
+    gap: 12px;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+}

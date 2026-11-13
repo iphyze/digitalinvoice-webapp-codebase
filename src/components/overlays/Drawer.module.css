@@ -1,0 +1,175 @@
+.layer {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal, 1000);
+  display: flex;
+  justify-content: flex-end;
+  overscroll-behavior: none;
+}
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--color-overlay);
+  animation: fade 180ms ease both;
+  touch-action: none;
+}
+.drawer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: min(560px, 100%);
+  background: linear-gradient(
+    155deg,
+    color-mix(in srgb, var(--color-info) 6%, var(--color-surface-raised)),
+    var(--color-surface-raised) 45%,
+    color-mix(in srgb, var(--color-accent) 3%, var(--color-surface-raised)) 100%
+  );
+  box-shadow: var(--shadow-lg);
+  color: var(--color-ink);
+  animation: slide 230ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  outline: none;
+  border-left: 1px solid var(--color-line);
+}
+.header {
+  position: relative;
+  padding: 22px 24px 18px;
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  align-items: flex-start;
+  border-bottom: 1px solid var(--color-line);
+  background: linear-gradient(
+    115deg,
+    color-mix(in srgb, var(--color-info) 16%, var(--color-surface-raised)),
+    color-mix(in srgb, var(--color-info) 5%, var(--color-surface-raised))
+  );
+}
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 24px;
+  width: 68px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-info), transparent);
+  opacity: 0.68;
+  pointer-events: none;
+}
+.header h2 {
+  font: 600 calc(21px * var(--font-scale)) / 1.25 var(--font-display);
+  margin: 4px 0 5px;
+}
+.eyebrow {
+  margin: 0;
+  font-size: calc(10px * var(--font-scale));
+  font-weight: 750;
+  color: var(--color-info);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.description {
+  margin: 0;
+  color: var(--color-ink-muted);
+  font-size: calc(12px * var(--font-scale));
+}
+.close {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: var(--color-hover);
+  border: 1px solid var(--color-line);
+  color: var(--color-ink);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.close:focus-visible {
+  outline: 2px solid var(--color-focus);
+}
+.body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 21px 24px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+/* Only the drawer scroll area gets the narrower thumb; the global page
+   scrollbar remains unchanged. Light/dark colours come from tokens.css. */
+.body::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.body::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border: 1px solid transparent;
+  background-clip: padding-box;
+  border-radius: var(--radius-pill);
+}
+.body::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+  background-clip: padding-box;
+}
+.body::-webkit-scrollbar-thumb:active {
+  background: var(--scrollbar-thumb-active);
+  background-clip: padding-box;
+}
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 9px;
+  border-top: 1px solid var(--color-line);
+  padding: 14px 24px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--color-info) 7%, var(--color-surface-raised)),
+    var(--color-surface-raised)
+  );
+}
+.footer button {
+  font-size: max(var(--button-min-font), calc(var(--text-sm) * var(--button-token-ratio)));
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes slide {
+  from {
+    opacity: 0.9;
+    transform: translateX(26px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@media (max-width: 520px) {
+  .header {
+    padding: 17px 16px;
+  }
+  .header::after {
+    left: 16px;
+  }
+  .body {
+    padding: 16px;
+  }
+  .footer {
+    padding: 12px 16px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .backdrop,
+  .drawer {
+    animation: none;
+  }
+}

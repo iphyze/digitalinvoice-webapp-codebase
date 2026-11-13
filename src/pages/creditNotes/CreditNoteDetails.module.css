@@ -1,0 +1,56 @@
+/* Only credit-note-specific presentation: shared invoice cards, tokens and
+   responsive rules live in ../invoices/InvoiceDetails.module.css. */
+.sourceLink {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.sourceLink:hover {
+  color: var(--color-ink);
+}
+.caption {
+  margin-top: 8px;
+  color: var(--color-ink-muted);
+  font-size: var(--text-xs);
+  line-height: 1.65;
+}
+.reasonText {
+  margin: 0;
+  color: var(--color-ink);
+  font-size: var(--text-sm);
+  line-height: 1.75;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.noteText {
+  padding-top: 13px;
+  border-top: 1px solid var(--color-line);
+  color: var(--color-ink-muted);
+  font-size: var(--text-sm);
+  white-space: pre-wrap;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+.approvalWarning {
+  margin-top: 6px;
+}
+.nrsStatus {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: var(--text-sm);
+  color: var(--color-ink-muted);
+  line-height: 1.6;
+}
+.nrsStatus svg {
+  flex: 0 0 auto;
+  margin-top: 2px;
+}
+.crumb {
+  color: var(--color-ink-muted);
+  font-size: var(--text-xs);
+}
+.crumb strong {
+  color: var(--color-ink);
+}

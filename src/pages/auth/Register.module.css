@@ -1,0 +1,86 @@
+/* Registration, Concept A: same seamless split layout as Login. */
+.page { width: 100%; }
+.heading { max-width: 25rem; }
+.eyebrow {
+  color: var(--color-primary);
+  text-transform: uppercase;
+  font-weight: 800;
+  font-size: var(--text-xs);
+  letter-spacing: 0.13em;
+  margin-bottom: var(--space-3);
+}
+.lead { color: var(--color-ink-muted); margin-top: var(--space-3); line-height: 1.55; }
+.form { display: grid; gap: var(--space-3); margin-top: var(--space-6); }
+/* Two independent columns with shrinkable field wrappers: long placeholders,
+   leading icons and visibility toggles must not push inputs into each other. */
+.passwordRow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+  min-width: 0;
+}
+/* Each field and its control stay inside their own grid track. */
+.passwordRow > * { min-width: 0; max-width: 100%; width: 100%; }
+.passwordRow > * > :nth-child(2) { min-width: 0; max-width: 100%; width: 100%; }
+.passwordRow :global(input) { min-width: 0; max-width: 100%; }
+@media (max-width: 599px) {
+  .passwordRow { grid-template-columns: minmax(0, 1fr); }
+}
+.submit { margin-top: var(--space-1); }
+.social > div:first-child { margin-block: var(--space-4) var(--space-3); }
+.googleNote { color: var(--color-ink-subtle); font-size: var(--text-xs); text-align: center; max-width: 21rem; margin: var(--space-2) auto 0; }
+.page > p:last-of-type { margin-top: var(--space-4); }
+
+/* Additional Google sign-up detail, kept functionally identical to the old flow. */
+.overlay {
+  position: fixed;
+  z-index: var(--z-modal);
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+  padding: var(--space-4);
+  background: var(--color-overlay);
+  animation: fx-enter var(--dur-base) var(--ease-out) both;
+}
+.dialog {
+  position: relative;
+  width: min(100%, 28rem);
+  margin-block: auto;
+  padding: var(--space-8);
+  background: var(--color-surface-raised);
+  color: var(--color-ink);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+.close {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-control);
+  background: var(--color-surface);
+}
+.close:hover { background: var(--color-hover); }
+.dialogIcon {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin-bottom: var(--space-4);
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
+  border-radius: var(--radius-card);
+}
+.dialogTitle { font-size: var(--text-2xl); }
+.dialogLead { margin-top: var(--space-3); color: var(--color-ink-muted); }
+.dialogForm { display: grid; gap: var(--space-5); margin-top: var(--space-6); }
+@media (max-width: 599px) {
+  .dialog { padding: var(--space-6); }
+}
+@media (prefers-reduced-motion: reduce) { .overlay, .dialog { animation: none; } }

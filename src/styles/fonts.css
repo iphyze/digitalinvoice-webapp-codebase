@@ -1,0 +1,30 @@
+/*
+  Self-hosted fonts. DigitalInvoice uses **Sora everywhere** (headings, body,
+  labels, fields, buttons, tables), matching the reference app.
+
+  Sora has no ₦ and no dot-below letters (Ọ ọ Ẹ ẹ Ṣ ṣ) and lacks some Latin
+  Extended Additional characters. Those characters (and only those) come from a
+  small Inter subset, declared under the same family name with unicode-range,
+  so the browser downloads it only on pages that use them.
+
+  IMPORTANT: both faces must have identical descriptors (font-weight 100 800,
+  font-style normal). If they differ, browsers treat them as two competing
+  fonts and may pick the fallback for everything, so Sora never loads
+  (this happened before: the whole app silently rendered in Inter).
+*/
+@font-face {
+  font-family: 'Sora';
+  src: url('../assets/fonts/Sora-Variable.woff2') format('woff2');
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Sora';
+  src: url('../assets/fonts/Inter-Fallback.woff2') format('woff2');
+  font-weight: 100 800; /* must match the Sora face exactly, or browsers treat it as a separate font */
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0124-0125, U+0132-0133, U+0138, U+013F-0140, U+017F-01C3, U+01C5-01F9, U+01FB-0217, U+021C-0236, U+0238-024F, U+0309, U+030F, U+0313, U+0315, U+031B, U+0323, U+032C, U+0337-0338, U+0342-0343, U+0346-036F, U+1E00-1E7F, U+1E86-1E9B, U+1E9D, U+1E9F-1EBB, U+1EBE-1EF1, U+1EF4-1EFF, U+2000-200B, U+2010-2012, U+2015-2017, U+201B, U+201F, U+2023-2025, U+2027, U+202F, U+2031, U+2034-2038, U+203B-2043, U+2045-2055, U+2057, U+205F, U+20A0-20AB, U+20AD-20AF, U+20B1-20B5, U+20B8-20BA, U+20BC-20BF;
+}

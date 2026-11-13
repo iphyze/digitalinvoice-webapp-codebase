@@ -1,0 +1,121 @@
+.button {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--control-h);
+  padding: 0 0.95rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  font-size: max(var(--button-min-font), calc(var(--text-xs) * var(--button-token-ratio)));
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: background-color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out), box-shadow var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.inner {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.inner[data-hidden] {
+  visibility: hidden;
+}
+
+.spinner {
+  position: absolute;
+  z-index: 1;
+}
+
+.button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.sm { height: var(--control-h-sm); padding: 0 0.75rem; font-size: max(var(--button-min-font), calc(0.71875rem * var(--button-font-scale))); }
+.lg { height: var(--control-h-lg); padding: 0 1.15rem; font-size: max(var(--button-min-font), calc(var(--text-sm) * var(--button-token-ratio))); }
+.block { width: 100%; }
+
+/* Corporate blue gradient in BOTH themes. Deep enough for white text,
+   including when --color-primary becomes a lighter blue in dark mode. */
+.primary {
+  background: linear-gradient(118deg,
+    color-mix(in srgb, var(--color-primary) 66%, var(--color-side)),
+    color-mix(in srgb, color-mix(in srgb, var(--color-primary) 63%, var(--color-side)) 94%, var(--color-accent)));
+  color: #ffffff;
+  box-shadow: 0 3px 9px -5px color-mix(in srgb, var(--color-primary) 40%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / 0.12);
+}
+
+/* Light sweep and gentle lift inspired by the previous app's hover feedback;
+   generated from new theme tokens and respects reduced motion. */
+.primary::before {
+  content: '';
+  position: absolute;
+  top: -25%;
+  bottom: -25%;
+  left: 0;
+  width: 35%;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.2), transparent);
+  transform: translate3d(-180%, 0, 0) skewX(-20deg);
+  transition: transform 580ms var(--ease-out);
+  pointer-events: none;
+}
+.primary:hover:not(:disabled) {
+  box-shadow: 0 6px 14px -8px color-mix(in srgb, var(--color-primary) 50%, transparent),
+    inset 0 1px 0 rgb(255 255 255 / 0.15);
+}
+.primary:hover:not(:disabled)::before {
+  transform: translate3d(360%, 0, 0) skewX(-20deg);
+}
+
+.secondary {
+  background: var(--color-surface);
+  border-color: var(--color-line-strong);
+  color: var(--color-ink);
+  box-shadow: var(--shadow-xs);
+}
+.secondary:hover:not(:disabled) { background: var(--color-hover); }
+
+.ghost {
+  background: transparent;
+  color: var(--color-ink-muted);
+}
+.ghost:hover:not(:disabled) { background: var(--color-hover); color: var(--color-ink); }
+
+.danger {
+  background: var(--color-danger);
+  color: #ffffff;
+}
+.danger:hover:not(:disabled) { filter: brightness(0.94); }
+/* Dark mode's status-red token is bright: darken the filled danger surface
+   so its label can stay white without sacrificing contrast. */
+:global([data-theme='dark']) .danger {
+  background: color-mix(in srgb, var(--color-danger) 65%, var(--color-side));
+  color: #ffffff;
+}
+:global([data-theme='dark']) .secondary,
+:global([data-theme='dark']) .ghost { color: #ffffff; }
+
+@media (prefers-reduced-motion: reduce) {
+  .primary::before { transition: none; }
+  .primary:hover:not(:disabled)::before { transform: translate3d(-180%, 0, 0) skewX(-20deg); }
+  .button:hover:not(:disabled) { transform: none; }
+}

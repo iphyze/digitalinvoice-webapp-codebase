@@ -1,0 +1,58 @@
+/* Shared styles for auth screens (login, register, forgot/reset password) */
+.title {
+  font-size: calc(clamp(1.75rem, 1.5rem + 1vw, 2rem) * var(--font-scale));
+  letter-spacing: -0.025em;
+}
+
+.subtitle {
+  margin-top: 0.4rem;
+  color: var(--color-ink);
+  font-size: var(--text-md);
+  font-weight: 600;
+}
+
+.lead {
+  margin-top: 0.25rem;
+  color: var(--color-ink-muted);
+}
+
+.notice {
+  margin-bottom: var(--space-6);
+}
+
+.form {
+  display: grid;
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+}
+
+.submit {
+  margin-top: var(--space-2);
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: var(--space-6) 0 var(--space-4);
+  color: var(--color-ink-subtle);
+  font-size: var(--text-sm);
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--color-line);
+}
+
+.switch {
+  margin-top: var(--space-6);
+  color: var(--color-ink-muted);
+  text-align: center;
+}
+
+.switch a {
+  font-weight: 600;
+}

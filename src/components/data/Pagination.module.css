@@ -1,0 +1,98 @@
+.pagination {
+  padding: 13px 16px;
+  background: var(--card-fill);
+  border: 1px solid var(--color-line);
+  border-top: 0;
+  border-radius: 0 0 var(--radius-card, 10px) var(--radius-card, 10px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-ink-muted);
+  font-size: calc(12px * var(--font-scale));
+}
+.pagination p {
+  margin: 0;
+}
+.pagination strong {
+  color: var(--color-ink);
+  font-weight: 700;
+}
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.limit {
+  white-space: nowrap;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-right: 12px;
+}
+.limitSelect {
+  width: 82px;
+  min-width: 82px;
+}
+.limitSelect > div {
+  width: 100%;
+}
+.pages {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+}
+.controls button {
+  min-width: 32px;
+  height: 32px;
+  border-radius: 7px;
+  border: 1px solid var(--color-line);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-family: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  font-size: max(var(--button-min-font), calc(1em * var(--button-token-ratio)));
+  cursor: pointer;
+}
+.controls button[aria-current='page'] {
+  background: var(--color-primary-soft);
+  color: var(--color-info);
+  border-color: var(--color-focus);
+}
+.controls button:hover:not(:disabled) {
+  background: var(--color-hover);
+}
+.controls button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.controls button:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+.navButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+@media (max-width: 690px) {
+  .pagination {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px;
+  }
+  .controls {
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  .limit {
+    margin-right: auto;
+  }
+  .pages {
+    gap: 2px;
+  }
+  .pages button {
+    min-width: 29px;
+  }
+}

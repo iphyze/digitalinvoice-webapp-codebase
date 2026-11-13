@@ -1,0 +1,39 @@
+.page { min-width: 0; display: grid; gap: 20px; padding-bottom: 24px; }
+.actions { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(165px, 1fr)); gap: 12px; }
+.panel { min-width: 0; padding: 18px; background: var(--card-fill); border: 1px solid var(--color-line); border-radius: var(--radius-card); box-shadow: var(--shadow-xs); display: grid; gap: 14px; }
+.panelHeading { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.panelHeading h2 { margin: 0; color: var(--color-ink); font-size: var(--text-md); font-weight: 650; }
+.panelHeading p { margin: 6px 0 0; color: var(--color-ink-muted); font-size: var(--text-xs); line-height: 1.6; }
+.filters { display: flex; gap: 12px; flex-wrap: wrap; align-items: end; }
+.filters > * { flex: 1 1 165px; min-width: 155px; }
+.filters > button { flex: 0 0 auto; }
+.search { flex: 2 1 240px; }
+.rowTitle { display: grid; gap: 4px; min-width: 0; max-width: min(100%, 245px); }
+.rowTitle strong { color: var(--color-ink); font-size: var(--text-sm); font-weight: 650; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rowTitle span { font-size: var(--text-xs); color: var(--color-ink-muted); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.muted { color: var(--color-ink-muted); font-size: var(--text-xs); }
+.rowActions { display: flex; gap: 6px; flex-wrap: nowrap; align-items: center; white-space: nowrap; }
+.empty { padding: 36px 18px; text-align: center; display: grid; justify-items: center; gap: 10px; }
+.empty h3 { margin: 0; font-size: var(--text-md); }
+.empty p { margin: 0; color: var(--color-ink-muted); font-size: var(--text-sm); line-height: 1.6; }
+.form { display: grid; gap: 15px; }
+.formGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; }
+.footer { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+.formError { font-size: var(--text-sm); color: var(--color-danger); margin: 0; }
+.sectionNote { color: var(--color-ink-muted); font-size: var(--text-xs); line-height: 1.6; margin: 0; }
+.auditDescription { font-size: var(--text-sm); color: var(--color-ink); line-height: 1.5; }
+@media (max-width: 700px) { .formGrid { grid-template-columns: minmax(0, 1fr); } .panel { padding: 14px; } .filters > * { flex: 1 1 100%; } .filters > button { flex: 0 0 auto; } }
+
+.ellipsisText {
+  display: block;
+  max-width: 160px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media (max-width: 639px) {
+  .rowActions { flex-wrap: wrap; }
+  .rowTitle strong, .rowTitle span { white-space: normal; overflow-wrap: anywhere; }
+}

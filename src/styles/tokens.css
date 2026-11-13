@@ -1,0 +1,279 @@
+/*
+  DigitalInvoice design tokens: Direction B2 "Corporate"
+  Teecoms navy & blue, navy sidebar in both themes, Sora everywhere (Inter only supplies ₦ and dot-below letters).
+  Components use these semantic names only; theme switching happens here.
+  All text/background pairs below meet WCAG AA (4.5:1).
+*/
+
+:root,
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  /* Surfaces */
+  --color-bg: #f5f7fb;
+  --color-surface: #ffffff;
+  --color-surface-raised: #ffffff;
+  --color-surface-sunken: #eef2f8;
+  /* Workspace card fill: near-white top with a quiet blue-grey wash below. */
+  --card-fill: linear-gradient(145deg, #ffffff 0%, #fcfdff 55%, #f3f8ff 100%);
+  --card-fill-hover: linear-gradient(145deg, #ffffff 0%, #f8fbff 50%, #eaf3ff 100%);
+
+  --color-auth-canvas: #ffffff;      /* auth form side: white so tinted fields stand out */
+  /* Shared field palette: soft off-white inputs on white cards. */
+  --color-field-bg: #f3f7fa;
+  --color-field-border: #dce6ef;
+  --color-field-icon: #8297ac;
+  --color-hover: #eef2f8;            /* hovered rows, menu items, options */
+  --color-overlay: rgb(7 22 54 / 0.5);
+
+  /* Text */
+  --color-ink: #0a1e45;
+  --color-ink-muted: #46557a;
+  --color-ink-subtle: #5a6987;
+  --color-ink-inverse: #ffffff;
+
+  /* Lines */
+  --color-line: #dce3ee;
+  --color-line-strong: #b9c6da;
+
+  /* Brand / action */
+  --color-primary: #1766c8;
+  --color-primary-hover: #1255a8;
+  --color-primary-active: #0f4890;
+  --color-on-primary: #ffffff;
+  --color-primary-soft: #e3eefc;
+  --color-focus: #2487da;
+  --scrollbar-track: #edf2f8;
+  --scrollbar-thumb: #a8bdd9;
+  --scrollbar-thumb-hover: #658ebf;
+  --scrollbar-thumb-active: #1766c8;
+  --color-accent: #19d8a4;           /* DigitalInvoice green: highlights, never small text */
+
+  /* Navy panels (auth brand panel, portal summary, Premium card) */
+  --color-band: #0a1e45;
+  --color-band-line: rgb(255 255 255 / 0.1);
+
+  /* Sidebar: navy in both themes */
+  --color-side: #0a1e45;
+  --color-side-ink: #eaf1fb;
+  --color-side-muted: #a6b4ce;
+  --color-side-hover: #13295a;
+  --color-side-active: #1a3566;
+  --color-side-active-ink: #ffffff;
+  --color-side-line: rgb(234 241 251 / 0.1);
+
+  /* Status (badges, alerts, amounts) */
+  --color-success: #0b7f57;
+  --color-success-soft: #e2f6ee;
+  --color-warning: #a65f00;
+  --color-warning-soft: #fdf1df;
+  --color-danger: #c8323c;
+  --color-danger-soft: #fdecee;
+  --color-info: #1766c8;
+  --color-info-soft: #e3eefc;
+  --color-neutral-soft: #eef2f8;
+
+  /* Elevation (navy-tinted) */
+  --shadow-xs: 0 1px 2px rgb(10 30 69 / 0.06);
+  --shadow-sm: 0 1px 3px rgb(10 30 69 / 0.08), 0 1px 2px rgb(10 30 69 / 0.04);
+  --shadow-md: 0 8px 20px -8px rgb(10 30 69 / 0.16), 0 2px 4px rgb(10 30 69 / 0.05);
+  --shadow-lg: 0 24px 48px -16px rgb(10 30 69 / 0.24), 0 6px 12px -6px rgb(10 30 69 / 0.08);
+  --shadow-popover: 0 18px 36px -12px rgb(10 30 69 / 0.28), 0 0 0 1px rgb(10 30 69 / 0.04);
+}
+
+:root[data-theme='dark'] {
+  /*
+    Dark palette: the previous app's calm slate tones blended with the brand
+    navy (less saturated and slightly lifted vs. the first B2 dark). All text
+    and status pairs pass WCAG AA.
+  */
+  color-scheme: dark;
+
+  --color-bg: #09131f;
+  --color-surface: #0f1c2c;
+  --color-surface-raised: #152539;
+  --color-surface-sunken: #0b1622;
+  /* Low-contrast slate/navy blend; light surfaces are never reused in dark mode. */
+  --card-fill: linear-gradient(145deg, #18293c 0%, #152538 55%, #102031 100%);
+  --card-fill-hover: linear-gradient(145deg, #1b3044 0%, #182b3e 55%, #13273a 100%);
+
+  --color-auth-canvas: #09131f;      /* dark: same as --color-bg (unchanged) */
+  /* Dark fields sit slightly above the card without hard outlines. */
+  --color-field-bg: #142537;
+  --color-field-border: #283e51;
+  --color-field-icon: #93a6b8;
+  --color-hover: #1a2b40;            /* hovered rows, menu items, options */
+  --color-overlay: rgb(3 8 15 / 0.72);
+
+  --color-ink: #eef3f9;
+  --color-ink-muted: #aab6c8;
+  --color-ink-subtle: #8a98ad;
+  --color-ink-inverse: #0a1e45;
+
+  --color-line: #1f3145;
+  --color-line-strong: #2c4259;
+
+  --color-primary: #5ba4f5;
+  --color-primary-hover: #7db7f7;
+  --color-primary-active: #9cc8f9;
+  --color-on-primary: #06121f;
+  --color-primary-soft: #13283f;
+  --color-focus: #7db7f7;
+  --scrollbar-track: #0b1622;
+  --scrollbar-thumb: #2c4259;
+  --scrollbar-thumb-hover: #496781;
+  --scrollbar-thumb-active: #7db7f7;
+  --color-accent: #2ee5b3;
+
+  /* Navy panels (auth brand panel, portal summary, Premium card) */
+  --color-band: #10223a;
+  --color-band-line: rgb(226 236 248 / 0.08);
+
+  --color-side: #0c1724;
+  --color-side-ink: #eef3f9;
+  --color-side-muted: #93a2b8;
+  --color-side-hover: #132233;
+  --color-side-active: #1a2d42;
+  --color-side-active-ink: #ffffff;
+  --color-side-line: rgb(226 236 248 / 0.07);
+
+  --color-success: #42d69c;
+  --color-success-soft: #10291f;
+  --color-warning: #f2b45a;
+  --color-warning-soft: #2c2215;
+  --color-danger: #f77a80;
+  --color-danger-soft: #331a1f;
+  --color-info: #7cb6f7;
+  --color-info-soft: #13283f;
+  --color-neutral-soft: #172638;
+
+  --shadow-xs: 0 1px 2px rgb(0 0 0 / 0.35);
+  --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.4);
+  --shadow-md: 0 8px 20px -8px rgb(0 0 0 / 0.5), 0 0 0 1px rgb(226 236 248 / 0.04);
+  --shadow-lg: 0 24px 52px -18px rgb(0 0 0 / 0.6), 0 0 0 1px rgb(226 236 248 / 0.05);
+  --shadow-popover: 0 16px 36px -12px rgb(0 0 0 / 0.55), 0 0 0 1px rgb(226 236 248 / 0.06);
+}
+
+:root {
+  /* Type: one place to tune text size app-wide, and buttons (2x the app-wide reduction) */
+  --font-scale: 0.95;
+  --button-font-scale: 0.9;
+  --button-token-ratio: calc(var(--button-font-scale) / var(--font-scale)); /* for button rules that use text tokens */
+  --button-min-font: 10.5px;
+  /* Sora everywhere (₦ and dot-below letters come from the Inter fallback in fonts.css) */
+  --font-sans: 'Sora', system-ui, 'Segoe UI', Roboto, Arial, sans-serif;
+  --font-display: var(--font-sans);
+  --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+
+  --text-xs: calc(0.75rem * var(--font-scale));     /* 12 */
+  --text-sm: calc(0.8125rem * var(--font-scale));   /* 13: tables, secondary UI */
+  --text-base: calc(0.875rem * var(--font-scale));  /* 14: default app text */
+  --text-md: calc(0.9375rem * var(--font-scale));   /* 15 */
+  --text-lg: calc(1.0625rem * var(--font-scale));   /* 17 */
+  --text-xl: calc(1.25rem * var(--font-scale));     /* 20 */
+  --text-2xl: calc(1.5rem * var(--font-scale));     /* 24: page titles */
+  --text-3xl: calc(1.875rem * var(--font-scale));   /* 30 */
+  --text-4xl: calc(2.5rem * var(--font-scale));     /* 40: auth / marketing headlines */
+
+  --leading-tight: 1.2;
+  --leading-snug: 1.35;
+  --leading-body: 1.55;
+  --tracking-display: -0.02em;
+
+  /* Space (4px base) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+
+  /* Radius */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-control: 8px;   /* buttons, inputs, selects */
+  --radius-card: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-pill: 999px;
+
+  /* Sizes */
+  --control-h-sm: 2.125rem;  /* 34 */
+  --control-h: 2.625rem;     /* 42px: standard workspace fields, including modals */
+  --field-text-size: var(--text-sm); /* shared value size for inputs, selects, dates */
+  --control-h-lg: 3.125rem;  /* 50: touch / auth forms */
+  --sidebar-w: 15rem;
+  --sidebar-w-collapsed: 4.25rem;
+  --topbar-h: 3.5rem;
+  --content-max: 90rem;
+
+  /* Motion: transform/opacity only */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 140ms;
+  --dur-base: 220ms;
+  --dur-slow: 420ms;
+
+  /* Layers */
+  --z-sticky: 20;
+  --z-sidebar: 40;
+  --z-dropdown: 60;
+  --z-overlay: 80;
+  --z-modal: 90;
+  --z-toast: 100;
+}
+
+
+/* Public marketing hero and illustrative light-on-navy workspace (fixed in both themes). */
+:root {
+  --marketing-navy-start: #0a1e45;
+  --marketing-navy-middle: #0c2045;
+  --marketing-navy-end: #153f6d;
+  --marketing-dark-start: #0e1d30;
+  --marketing-dark-middle: #10223a;
+  --marketing-dark-end: #173352;
+  --marketing-highlight: #65d9d0;
+  --marketing-accent: #46e4c6;
+  --marketing-copy: #bdcee5;
+  --marketing-text: #eaf1fb;
+  --marketing-heading: #f4f8ff;
+  --marketing-cta-text: #ffffff;
+  --marketing-cta-green: #087e79;
+  --marketing-cta-blue: #1766c8;
+  --marketing-cta-green-hover: #086e6a;
+  --marketing-cta-blue-hover: #1255a8;
+
+  --preview-bg: #f7f9fd;
+  --preview-surface: #ffffff;
+  --preview-sunken: #e9f1fb;
+  --preview-ink: #0a1e45;
+  --preview-muted: #46557a;
+  --preview-subtle: #5a6987;
+  --preview-line: #dce3ee;
+  --preview-line-soft: #e9eef5;
+  --preview-outline: #e1e8f2;
+  --preview-success: #0b7f57;
+  --preview-success-soft: #e2f6ee;
+  --preview-info: #1766c8;
+  --preview-info-soft: #e3eefc;
+  --preview-neutral-soft: #eef2f8;
+  --preview-dot: #d7e0eb;
+  --preview-accent: #19bfa8;
+}
+
+/* Persistent workspace sidebar appearance (the approved light-mode navy,
+   intentionally identical even when the content theme is dark). */
+:root {
+  --shell-nav-bg: #0a1e45;
+  --shell-nav-ink: #eaf1fb;
+  --shell-nav-muted: #a6b4ce;
+  --shell-nav-hover: #13295a;
+  --shell-nav-active: #1a3566;
+  --shell-nav-active-ink: #ffffff;
+  --shell-nav-line: rgb(234 241 251 / 0.1);
+  --shell-nav-status: #a7f4d8;
+  --shell-nav-status-soft: #133e4b;
+}

@@ -1,0 +1,342 @@
+.page {
+  min-width: 0;
+  display: grid;
+  gap: 20px;
+  padding-bottom: 20px;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 9px;
+}
+.hubGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 15px;
+}
+.hubCard {
+  display: grid;
+  align-content: start;
+  gap: 13px;
+  min-width: 0;
+  padding: 21px;
+  background: var(--card-fill);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  color: var(--color-ink);
+  box-shadow: var(--shadow-xs);
+  text-decoration: none;
+  transition: background-color 170ms ease, border-color 170ms ease;
+}
+.hubCard:hover {
+  background: var(--card-fill-hover);
+  border-color: var(--color-line-strong);
+}
+.hubCard:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+.hubTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.hubIcon {
+  width: 45px;
+  height: 45px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-control);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+.hubTag,
+.eyebrow {
+  color: var(--color-ink-muted);
+  font-size: var(--text-xs);
+}
+.hubCard strong {
+  font-weight: 650;
+  font-size: var(--text-lg);
+}
+.hubCard p {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-ink-muted);
+  line-height: 1.65;
+}
+.hubLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 8px;
+  color: var(--color-primary);
+  font-size: var(--text-sm);
+  font-weight: 650;
+}
+.filterBox,
+.panel,
+.emptyPanel {
+  min-width: 0;
+  background: var(--card-fill);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-card);
+  padding: 18px;
+  box-shadow: var(--shadow-xs);
+}
+.filterBox {
+  display: grid;
+  gap: 10px;
+}
+.filterBox form {
+  margin: 0;
+}
+.filterGrid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+}
+.filterGrid > div {
+  min-width: 150px;
+  flex: 1 1 165px;
+}
+.filterGrid > button {
+  flex: 0 0 auto;
+}
+.filterHint {
+  margin: 0;
+  color: var(--color-ink-muted);
+  font-size: var(--text-xs);
+  line-height: 1.6;
+}
+.apply {
+  height: var(--control-h);
+}
+.errorText {
+  color: var(--color-danger);
+  margin: 10px 0 0;
+  font-size: var(--text-sm);
+}
+.inlineAction {
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  text-decoration: underline;
+  color: var(--color-primary);
+  font: inherit;
+  font-weight: 650;
+}
+.inlineAction:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
+  gap: 13px;
+}
+.panel {
+  display: grid;
+  gap: 14px;
+}
+.panelHeading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 15px;
+}
+.panelHeading h2,
+.panel h2 {
+  margin: 0;
+  color: var(--color-ink);
+  font-size: var(--text-md);
+  font-weight: 650;
+}
+.panelHeading p,
+.panel > p {
+  font-size: var(--text-xs);
+  color: var(--color-ink-muted);
+  line-height: 1.6;
+  margin: 6px 0 0;
+}
+.empty,
+.emptyPanel {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  gap: 10px;
+  padding: 38px 18px;
+  color: var(--color-ink-muted);
+}
+.empty h3,
+.emptyPanel h2 {
+  margin: 0;
+  font-size: var(--text-md);
+  color: var(--color-ink);
+}
+.empty p,
+.emptyPanel p {
+  max-width: 480px;
+  margin: 0;
+  line-height: 1.6;
+  font-size: var(--text-sm);
+}
+.smallEmpty {
+  padding: 16px;
+  color: var(--color-ink-muted);
+  font-size: var(--text-sm);
+}
+.statementLead {
+  background: var(--color-band);
+  border: 1px solid var(--color-band-line);
+  border-radius: var(--radius-card);
+  padding: 23px;
+  color: var(--color-side-ink);
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.statementLead > div {
+  display: grid;
+  gap: 7px;
+}
+.statementLead h2 {
+  color: var(--color-side-ink);
+  font-size: var(--text-xl);
+  margin: 0;
+}
+.statementLead p,
+.statementLead small,
+.statementLead span {
+  color: var(--color-side-muted);
+  margin: 0;
+  font-size: var(--text-xs);
+}
+.statementLead strong {
+  font-size: var(--text-xl);
+}
+.statementClosing {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 18px;
+  padding: 15px;
+  border-top: 1px solid var(--color-line);
+  font-size: var(--text-sm);
+}
+.statementClosing strong {
+  font-size: var(--text-lg);
+}
+.sendForm {
+  display: grid;
+  gap: 16px;
+}
+.twoFields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 13px;
+}
+.complianceColumns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 15px;
+  align-items: start;
+}
+.checkList {
+  display: grid;
+  gap: 0;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.checkList li {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-line);
+}
+.checkList li:last-child {
+  border-bottom: 0;
+}
+.checkList li > div {
+  display: grid;
+  min-width: 0;
+  flex: 1;
+  gap: 5px;
+}
+.checkList strong,
+.definitionList dd {
+  color: var(--color-ink);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+.checkList small,
+.definitionList dt {
+  color: var(--color-ink-muted);
+  font-size: var(--text-xs);
+}
+.checkIcon {
+  display: grid;
+  place-items: center;
+  color: var(--color-warning);
+}
+.checkIcon[data-ready='true'] {
+  color: var(--color-success);
+}
+.definitionList {
+  display: grid;
+  gap: 0;
+  margin: 0;
+}
+.definitionList > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-line);
+}
+.definitionList > div:last-child {
+  border-bottom: 0;
+}
+.definitionList dd {
+  margin: 0;
+  text-align: right;
+  max-width: 60%;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 1120px) {
+  .hubGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 740px) {
+  .hubGrid,
+  .complianceColumns,
+  .twoFields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .filterGrid > div {
+    flex-basis: 100%;
+  }
+  .filterGrid > button {
+    width: 100%;
+  }
+  .filterBox,
+  .panel {
+    padding: 14px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hubCard {
+    transition: none;
+  }
+}

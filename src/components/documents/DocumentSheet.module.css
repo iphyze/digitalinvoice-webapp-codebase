@@ -1,0 +1,329 @@
+/* Modern document template (approved Sample B). Fixed paper colours in both themes. */
+.sheet {
+  --ink: #0a1e45;
+  --muted: #46557a;
+  --subtle: #5a6987;
+  --line: #dce3ee;
+  --soft: #f5f7fb;
+  position: relative;
+  width: 820px;
+  padding: 46px 48px 36px;
+  border-radius: 6px;
+  background: #ffffff;
+  color: var(--ink);
+  box-shadow:
+    0 1px 2px rgb(10 30 69 / 0.08),
+    0 24px 48px -18px rgb(10 30 69 / 0.3);
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color-scheme: light;
+}
+:global([data-theme='dark']) .sheet {
+  box-shadow:
+    0 30px 60px -20px rgb(0 0 0 / 0.8),
+    0 0 0 1px rgb(255 255 255 / 0.06);
+}
+
+.band {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 8px;
+  border-radius: 6px 6px 0 0;
+  background: linear-gradient(90deg, #19d8a4, #2487da 55%, #0a1e45);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--line);
+}
+.seller {
+  display: flex;
+  gap: 14px;
+  min-width: 0;
+}
+.logo {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 50px;
+  height: 50px;
+  overflow: hidden;
+  border-radius: 12px;
+  background: linear-gradient(150deg, #19d8a4, #2487da);
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+}
+.logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #ffffff;
+}
+.eyebrow {
+  color: #1766c8;
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.sellerName {
+  margin: 2px 0 4px;
+  color: var(--ink);
+  font-size: 18px;
+}
+.muted {
+  color: var(--muted);
+  font-size: 12px;
+  overflow-wrap: break-word;
+}
+.number {
+  text-align: right;
+  flex-shrink: 0;
+}
+.label {
+  color: var(--subtle);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.number h3 {
+  margin: 2px 0 6px;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 26px;
+  letter-spacing: -0.02em;
+}
+.statuses {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+.statuses span {
+  padding: 3px 10px;
+  border-radius: 99px;
+  background: #eef2f8;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+.statuses span[data-tone='success'] {
+  background: #e2f6ee;
+  color: #0b7f57;
+}
+.statuses span[data-tone='warning'] {
+  background: #fdf1df;
+  color: #a65f00;
+}
+.statuses span[data-tone='danger'] {
+  background: #fdecee;
+  color: #c8323c;
+}
+
+.parties {
+  display: grid;
+  grid-template-columns: 1fr 1.25fr;
+  gap: 24px;
+  padding: 20px 0;
+}
+.partyName {
+  display: block;
+  margin: 4px 0 2px;
+  font-size: 14px;
+}
+.meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px 16px;
+  margin: 0;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  align-content: start;
+}
+.meta dt {
+  color: var(--subtle);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.meta dd {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  overflow-wrap: break-word;
+}
+
+.highlight {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  background: linear-gradient(118deg, #0a1e45, #1766c8);
+  color: #ffffff;
+}
+.highlight span {
+  color: #bdcee5;
+  font-weight: 600;
+}
+.highlight strong {
+  font-family: var(--font-sans);
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.tableTitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+.tableTitle strong {
+  font-size: 13px;
+}
+.tableTitle span {
+  color: var(--subtle);
+  font-size: 11.5px;
+}
+.tableWrap {
+  overflow-x: auto;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.table th {
+  padding: 9px 10px;
+  background: #eef2f8;
+  color: var(--muted);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-align: left;
+  text-transform: uppercase;
+}
+.table th:first-child {
+  border-radius: 6px 0 0 6px;
+}
+.table th:last-child {
+  border-radius: 0 6px 6px 0;
+}
+.table td {
+  padding: 11px 10px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+.table td strong {
+  display: block;
+  font-size: 12.5px;
+}
+.table td small {
+  display: block;
+  color: var(--subtle);
+  font-size: 11px;
+}
+.table [data-align='right'] {
+  text-align: right;
+  white-space: nowrap;
+}
+.table [data-strong] {
+  font-weight: 700;
+}
+.empty {
+  color: var(--subtle);
+  text-align: center;
+  padding: 18px 10px !important;
+}
+
+.footerGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+  margin-top: 20px;
+}
+.footerGrid[data-totals] {
+  grid-template-columns: minmax(0, 1fr) 300px;
+}
+.blocks {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+.blocks strong {
+  display: block;
+  margin-top: 2px;
+}
+.card {
+  padding: 12px 14px;
+  border: 1px dashed #b9c6da;
+  border-radius: 10px;
+}
+.totals {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  align-content: start;
+}
+.totals div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+.totals dt {
+  color: var(--muted);
+}
+.totals dd {
+  margin: 0;
+  font-weight: 600;
+  text-align: right;
+}
+.totals [data-emphasis='grand'] {
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+  font-size: 14px;
+}
+.totals [data-emphasis='grand'] dd {
+  font-weight: 800;
+}
+.totals [data-emphasis='due'] {
+  margin-top: 6px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: linear-gradient(118deg, #0a1e45, #1766c8);
+  color: #ffffff;
+  font-size: 15px;
+}
+.totals [data-emphasis='due'] dt {
+  color: #bdcee5;
+}
+.totals [data-emphasis='due'] dd {
+  font-weight: 800;
+}
+
+.footer {
+  margin-top: 24px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  text-align: center;
+}
+.footer p {
+  font-weight: 600;
+}
+.footer small {
+  display: block;
+  margin-top: 6px;
+  color: var(--subtle);
+  font-size: 10.5px;
+}
