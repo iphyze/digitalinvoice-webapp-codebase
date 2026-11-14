@@ -786,3 +786,17 @@ The API's `docs/ERP-INTEGRATION-STEP7-TESTING.md` is the release gate for the St
 - Register KPI grids (Customers, Catalogue, Invoices, Payments, Credit Notes, Proformas, Delivery Notes) render `SummaryStat`. Keep each page's existing `.stats` grid columns/breakpoints; **do not reintroduce** page-local `.stat`, `.statIcon` or `.statBody` decoration. All KPI cards inherit `--card-fill`, the theme's subtle gradient, semantic icon tone and shared shadows.
 - `PageLoader` has a single centered `.panel` enclosing the spinner, loading text and progress bar. Full-screen loader fills the viewport with the theme background; inline route suspense keeps the app chrome visible and centers that same panel within its container. Respect `prefers-reduced-motion`.
 - Local QA: verify Customers/Catalogue/Invoice/Payment/Credit Note/Proforma/Delivery Note KPI layouts at desktop and 390px, both themes; confirm the loader card is centered in global loading and lazy navigation, without obstructed text, unexpected scroll or changes to CSP.
+
+### Onboarding sign-out and resume (Task 2, 2026-11-14)
+`src/components/auth/SignOutAction.jsx` is the shared header sign-out control on onboarding and subscription pages. Unsaved steps trigger the existing `ConfirmDialog` before logout; completed updates remain in the existing PHP endpoints. `src/utils/onboardingResume.js` selects the backend's `next_step`, with fallback for an older API. Bank details are optional, but partially entered details must be validated/saved before continuing. On password, Google or MFA login, `resolveAuthenticatedStartPath` still enforces verification, MFA, subscription, onboarding and platform routing. An already-started but unverified Paystack checkout resumes at the plans page; Task 3 will implement safe pending checkout continuation.
+
+Test: `node --test tests/onboarding_resume.test.mjs` and `npm run build` locally. Recheck the sign-out dialog, form persistence, welcome-back notice, light/dark mode and responsive widths.
+
+
+### 2026-11-14 — Task 3 deployment dependency
+
+Apply backend `migrations/20261114_subscription_checkout_recovery.sql` **before** uploading the checkout routes or the updated React plans page. Run `tests/subscription_pending_checkout_task3_unit.php`; see `docs/SUBSCRIPTION-PAYMENTS-TASK3.md` for operational rules, cron configuration and acceptance tests. Existing Paystack credentials, webhook signature checks and subscription activation rules remain authoritative.
+
+### 2026-11-14 — Checkout exception UI
+
+The Platform Subscriptions screen now calls the billing-permission-protected `POST /platform/subscriptions/pending-payments/close` and `/review` endpoints. Apply the backend payment-review migration first; then build this frontend with `npm run build`. Confirm dark/light and mobile layouts, review notes and credit previews with test payments. No new npm packages are required.

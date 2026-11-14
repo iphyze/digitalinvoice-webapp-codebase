@@ -11,6 +11,7 @@ import useAuthStore from '../../stores/useAuthStore'
 import useToastStore from '../../stores/useToastStore'
 import { removeFieldError, validateLoginForm } from '../../utils/validation'
 import { resolveSafePostLoginPath } from '../../utils/appPaths'
+import { hasSavedOnboardingProgress } from '../../utils/onboardingResume'
 import styles from './auth.module.css'
 
 /*
@@ -20,6 +21,7 @@ import styles from './auth.module.css'
   (?reason=session_expired + the stored message), now shown inline.
 */
 const SESSION_FALLBACK = 'Your session has expired. Please sign in again.'
+const shouldShowWelcomeToast = (path) => !(path.startsWith('/onboarding') && hasSavedOnboardingProgress(useAuthStore.getState().onboarding))
 
 export default function Login() {
   const navigate = useNavigate()
@@ -72,8 +74,9 @@ export default function Login() {
     const result = await login(form)
     setLoading(false)
     if (result.success) {
-      showToast('Welcome back to your secure workspace.', 'success', 'Welcome back')
-      navigate(destinationAfterSignIn(result.redirectTo), { replace: true })
+      const destination = destinationAfterSignIn(result.redirectTo)
+      if (shouldShowWelcomeToast(destination)) showToast('Welcome back to your secure workspace.', 'success', 'Welcome back')
+      navigate(destination, { replace: true })
     } else if (result.mfaRequired) {
       setMfaChallenge({ token: result.challengeToken, expiresInSeconds: result.expiresInSeconds })
       setForm((current) => ({ ...current, password: '' }))
@@ -89,14 +92,15 @@ export default function Login() {
     const result = await googleLogin({ credential, intent: 'login' })
     setGoogleLoading(false)
     if (result.success) {
-      showToast(
+      const destination = destinationAfterSignIn(result.redirectTo)
+      if (shouldShowWelcomeToast(destination)) showToast(
         result.data?.google_account_linked
           ? 'Google Sign-In is now securely connected to your existing account.'
           : 'You have signed in with Google.',
         'success',
         result.data?.google_account_linked ? 'Google connected' : 'Welcome back',
       )
-      navigate(destinationAfterSignIn(result.redirectTo), { replace: true })
+      navigate(destination, { replace: true })
     } else if (result.mfaRequired) {
       setMfaChallenge({ token: result.challengeToken, expiresInSeconds: result.expiresInSeconds })
       setForm((current) => ({ ...current, password: '' }))
@@ -108,8 +112,9 @@ export default function Login() {
 
   const finishMfa = (result) => {
     setMfaChallenge(null)
-    showToast('Multi-factor verification complete.', 'success', 'Welcome back')
-    navigate(destinationAfterSignIn(result.redirectTo), { replace: true })
+    const destination = destinationAfterSignIn(result.redirectTo)
+    if (shouldShowWelcomeToast(destination)) showToast('Multi-factor verification complete.', 'success', 'Welcome back')
+    navigate(destination, { replace: true })
   }
 
   const restartSignIn = () => {

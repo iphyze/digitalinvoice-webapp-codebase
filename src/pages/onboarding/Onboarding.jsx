@@ -3,11 +3,14 @@ import { Link, useNavigate } from 'react-router-dom'
 import { Building2, Check, CircleCheck, FileText, Landmark, Lock, ShieldCheck } from 'lucide-react'
 import Logo from '../../components/brand/Logo'
 import PageLoader from '../../components/ui/PageLoader'
+import Alert from '../../components/ui/Alert'
+import SignOutAction from '../../components/auth/SignOutAction'
 import ThemeToggle from '../../components/ui/ThemeToggle'
 import onboardingService from '../../services/onboardingService'
 import useAuthStore from '../../stores/useAuthStore'
 import useToastStore from '../../stores/useToastStore'
 import { getErrorMessage } from '../../utils/httpError'
+import { nextOnboardingStep, hasSavedOnboardingProgress } from '../../utils/onboardingResume'
 import BusinessProfileStep from './steps/BusinessProfileStep'
 import InvoiceSettingsStep from './steps/InvoiceSettingsStep'
 import ComplianceProfileStep from './steps/ComplianceProfileStep'
@@ -40,6 +43,11 @@ export default function Onboarding() {
   const [activeStep, setActiveStep] = useState(null)
   const [loading, setLoading] = useState(true)
   const [completing, setCompleting] = useState(false)
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
+  const [stepBusy, setStepBusy] = useState(false)
+  const [resumeDismissed, setResumeDismissed] = useState(false)
+  const reportUnsavedChanges = useCallback((dirty) => setHasUnsavedChanges(dirty), [])
+  const reportStepBusy = useCallback((busy) => setStepBusy(busy), [])
 
   const loadSetup = useCallback(async () => {
     setLoading(true)
@@ -59,7 +67,7 @@ export default function Onboarding() {
         complianceProfile: compliance.data?.data?.profile || null,
         accounts: accounts.data?.data?.bank_accounts || [],
       })
-      setActiveStep((current) => current || onboarding?.remaining_steps?.[0] || 'finish')
+      setActiveStep(nextOnboardingStep(onboarding))
     } catch (error) {
       showToast(getErrorMessage(error, 'Unable to load setup information.'), 'error', 'Setup unavailable')
     } finally {
@@ -83,6 +91,7 @@ export default function Onboarding() {
   }
 
   const goTo = (key) => {
+    setHasUnsavedChanges(false)
     setActiveStep(key)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
@@ -118,7 +127,8 @@ export default function Onboarding() {
     }
   }
 
-  if (loading) return <PageLoader message="Preparing your DigitalInvoice workspace setup..." />
+  const showResumeNotice = !resumeDismissed && !data.onboarding?.can_access_workspace
+    && hasSavedOnboardingProgress(data.onboarding)
 
   const activeIndex = Math.max(0, STEPS.findIndex((s) => s.key === activeStep))
 
@@ -128,10 +138,19 @@ export default function Onboarding() {
       <span className={styles.glowB} aria-hidden="true" />
       <header className={styles.header}>
         <Link to="/" className={styles.logoLink} aria-label="DigitalInvoice home"><Logo variant="full" height={38} alt="DigitalInvoice" /></Link>
-        <ThemeToggle />
+        <div className={styles.headerActions}>
+          <ThemeToggle />
+          <SignOutAction hasUnsavedChanges={hasUnsavedChanges} disabled={stepBusy || completing} />
+        </div>
       </header>
 
-      <main id="main-content" className={styles.main}>
+      {loading ? <main id="main-content" className={styles.main}><PageLoader inline message="Preparing your DigitalInvoice workspace setup..." /></main> : (
+        <main id="main-content" className={styles.main}>
+        {showResumeNotice ? (
+          <Alert tone="info" title="Welcome back" className={styles.resumeNotice} onDismiss={() => setResumeDismissed(true)}>
+            Your progress has been saved; continue from where you stopped.
+          </Alert>
+        ) : null}
         <section className={`${styles.intro} fx-stagger`}>
           <p className={styles.eyebrow}>Workspace setup</p>
           <h1>Set up {organization?.name || 'your business'}</h1>
@@ -172,16 +191,16 @@ export default function Onboarding() {
         <section className={styles.card} aria-live="polite">
           <div key={activeStep} className={styles.stepBody}>
             {activeStep === 'business_profile' ? (
-              <BusinessProfileStep profile={data.profile} organization={organization} completed={stepCompleted('business_profile')} onSaved={handleSaved} progressLabel={progressLabel} />
+              <BusinessProfileStep profile={data.profile} organization={organization} completed={stepCompleted('business_profile')} onSaved={handleSaved} onDirtyChange={reportUnsavedChanges} onBusyChange={reportStepBusy} progressLabel={progressLabel} />
             ) : null}
             {activeStep === 'invoice_settings' ? (
-              <InvoiceSettingsStep settings={data.settings} completed={stepCompleted('invoice_settings')} onSaved={handleSaved} onBack={() => goTo('business_profile')} progressLabel={progressLabel} />
+              <InvoiceSettingsStep settings={data.settings} completed={stepCompleted('invoice_settings')} onSaved={handleSaved} onDirtyChange={reportUnsavedChanges} onBusyChange={reportStepBusy} onBack={() => goTo('business_profile')} progressLabel={progressLabel} />
             ) : null}
             {activeStep === 'compliance_profile' ? (
-              <ComplianceProfileStep profile={data.complianceProfile} completed={stepCompleted('compliance_profile')} onSaved={handleSaved} onBack={() => goTo('invoice_settings')} progressLabel={progressLabel} />
+              <ComplianceProfileStep profile={data.complianceProfile} completed={stepCompleted('compliance_profile')} onSaved={handleSaved} onDirtyChange={reportUnsavedChanges} onBusyChange={reportStepBusy} onBack={() => goTo('invoice_settings')} progressLabel={progressLabel} />
             ) : null}
             {activeStep === 'bank_accounts' ? (
-              <BankAccountStep accounts={data.accounts} onAccountsChanged={(accounts) => setData((c) => ({ ...c, accounts }))}
+              <BankAccountStep accounts={data.accounts} onDirtyChange={reportUnsavedChanges} onBusyChange={reportStepBusy} onAccountsChanged={(accounts) => setData((c) => ({ ...c, accounts }))}
                 onBack={() => goTo('compliance_profile')} onContinue={() => goTo('finish')} progressLabel={progressLabel} />
             ) : null}
             {activeStep === 'finish' ? (
@@ -195,6 +214,7 @@ export default function Onboarding() {
           Your business details are stored securely and are used to prepare accurate invoice records.
         </p>
       </main>
+      )}
     </div>
   )
 }

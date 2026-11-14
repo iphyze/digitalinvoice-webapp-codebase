@@ -11,6 +11,8 @@ import Alert from '../../components/ui/Alert'
 import TextField from '../../components/forms/TextField'
 import Select from '../../components/forms/Select'
 import ConfirmDialog from '../../components/overlays/ConfirmDialog'
+import Modal from '../../components/overlays/Modal'
+import Textarea from '../../components/forms/Textarea'
 import platformService from '../../services/platformService'
 import useAuthStore from '../../stores/useAuthStore'
 import useToastStore from '../../stores/useToastStore'
@@ -40,6 +42,14 @@ export default function PlatformSubscriptions() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [revision, setRevision] = useState(0)
+  const [pendingRows, setPendingRows] = useState([])
+  const [pendingError, setPendingError] = useState('')
+  const [checkingPayment, setCheckingPayment] = useState(null)
+  const [checkoutConfirm, setCheckoutConfirm] = useState(null)
+  const [reviewEditor, setReviewEditor] = useState(null)
+  const [reviewNote, setReviewNote] = useState('')
+  const [reviewConfirmed, setReviewConfirmed] = useState(false)
+  const [reviewBusy, setReviewBusy] = useState(false)
   const [confirm, setConfirm] = useState('')
   const [busy, setBusy] = useState(false)
   const [actionError, setActionError] = useState('')
@@ -54,6 +64,14 @@ export default function PlatformSubscriptions() {
       const response = unwrap(await platformService.subscriptions(billingPageParams(params, ['search', 'status', 'plan_id', 'period'])), ['summary', 'subscriptions', 'pagination', 'plans', 'lifecycle'])
       assertCurrencyAmounts(response.summary?.monthly_recurring_revenue_by_currency)
       setData(response)
+      try {
+        const checkouts = unwrap(await platformService.pendingPayments())
+        setPendingRows(list(checkouts.payments))
+        setPendingError('')
+      } catch (pendingErr) {
+        setPendingRows([])
+        setPendingError(getErrorMessage(pendingErr, 'Pending payments could not be loaded.'))
+      }
     }
     catch (err) { setData(null); setError(getErrorMessage(err, 'Unable to load subscriptions.')) }
     finally { setLoading(false) }
@@ -71,6 +89,65 @@ export default function PlatformSubscriptions() {
     } catch (err) { setActionError(getErrorMessage(err, 'Unable to complete lifecycle operation.')) }
     finally { setBusy(false) }
   }
+  const reverifyPayment = async (paymentId) => {
+    if (!canManage || checkingPayment) return
+    setCheckingPayment(paymentId)
+    setPendingError('')
+    try {
+      const response = unwrap(await platformService.reverifyPendingPayment(paymentId))
+      toast(`Paystack check: ${String(response.result?.decision || 'completed').replaceAll('_', ' ')}.`, 'success', 'Payment checked')
+      setRevision((n) => n + 1)
+    } catch (err) {
+      setPendingError(getErrorMessage(err, 'Unable to verify this Paystack checkout.'))
+    } finally { setCheckingPayment(null) }
+  }
+  const beginReview = (kind, payment) => {
+    setReviewNote('')
+    setReviewConfirmed(false)
+    setReviewEditor({ kind, payment })
+  }
+  const resolveReview = async () => {
+    if (!reviewEditor || reviewBusy || reviewNote.trim().length < 10) return
+    if (['close', 'refunded'].includes(reviewEditor.kind) && !reviewConfirmed) return
+    setReviewBusy(true); setPendingError('')
+    try {
+      if (reviewEditor.kind === 'close') {
+        await platformService.closeUnpaidCheckout({ payment_id: reviewEditor.payment.id, reason: reviewNote.trim(), confirmed_unpaid: true })
+        toast('Expired checkout closed as unpaid. Watch for late Paystack charges.', 'success')
+      } else {
+        await platformService.resolvePendingPaymentReview({ payment_id: reviewEditor.payment.id, action: reviewEditor.kind,
+          note: reviewNote.trim(), confirmed_refunded: reviewEditor.kind === 'refunded' ? reviewConfirmed : undefined })
+        toast('Payment review updated.', 'success')
+      }
+      setReviewEditor(null)
+      setRevision((n) => n + 1)
+    } catch (err) {
+      setPendingError(getErrorMessage(err, 'Unable to complete payment review.'))
+    } finally { setReviewBusy(false) }
+  }
+  const checkoutRowActions = (payment) => (
+    <div className={styles.checkoutActions}>
+      {payment.review_status === 'needs_review' ? <>
+        <Button size="sm" variant="secondary" disabled={Boolean(checkingPayment || reviewBusy)} onClick={() => beginReview('refunded', payment)}>Mark refunded</Button>
+        <Button size="sm" variant="secondary" disabled={Boolean(checkingPayment || reviewBusy) || !payment.credit_preview} onClick={() => beginReview('credited', payment)}>Apply as credit</Button>
+        <Button size="sm" variant="secondary" disabled={Boolean(checkingPayment || reviewBusy)} onClick={() => beginReview('dismissed', payment)}>Dismiss</Button>
+      </> : <>
+        {payment.status === 'pending' && !payment.closed_reason ? <Button size="sm" variant="secondary" icon={RefreshCw} loading={checkingPayment === payment.id} disabled={Boolean(checkingPayment || reviewBusy)} onClick={() => reverifyPayment(payment.id)}>Re-verify with Paystack</Button> : null}
+        {payment.can_staff_close ? <Button size="sm" variant="secondary" disabled={Boolean(checkingPayment || reviewBusy)} onClick={() => setCheckoutConfirm(payment)}>Close as unpaid</Button> : null}
+      </>}
+    </div>
+  )
+  const checkoutColumns = [
+    { key: 'organization', header: 'Organisation', cell: (p) => <div className={styles.rowTitle}><strong>{p.organization_name}</strong><span>#{p.organization_id}</span></div> },
+    { key: 'plan', header: 'Plan / interval', cell: (p) => <div className={styles.rowTitle}><strong>{p.plan_name}</strong><span>{p.billing_interval}</span></div> },
+    { key: 'amount', header: 'Amount', cell: (p) => <strong className="num">{money(Number(p.amount_kobo || 0) / 100, p.currency || 'NGN')}</strong> },
+    { key: 'started', header: 'Started', cell: (p) => date(p.started_at) },
+    { key: 'status', header: 'Status', cell: (p) => p.review_status === 'needs_review'
+      ? <div className={styles.reviewStatus}><StatusBadge status="pending" label="Needs review" /><small>Paid after being replaced: possible duplicate charge</small></div>
+      : <StatusBadge status={p.status} label={p.status === 'pending' && !p.closed_reason ? 'Payment pending' : undefined} /> },
+    { key: 'closed', header: 'Closed reason', cell: (p) => p.closed_reason || '—' },
+    { key: 'attempts', header: 'Checks', cell: (p) => count(p.check_attempts) },
+  ]
   const rows = list(data?.subscriptions)
   const pg = pageMeta(data)
   const cards = [['Subscriptions', 'total_subscriptions'], ['Active', 'active_subscriptions'], ['Healthy (incl. trial)', 'healthy_subscriptions'], ['At risk', 'at_risk_subscriptions'], ['Expiring soon', 'expiring_soon']]
@@ -97,6 +174,11 @@ export default function PlatformSubscriptions() {
       <p className={styles.note}>Subscription lifecycle actions can update workspace access; reminder dispatch may send emails. MRR is calculated separately for each plan currency.</p>
     </section>}
     {data && !error && <PlatformCurrencyBreakdown title="Monthly recurring revenue by currency" rows={data.summary.monthly_recurring_revenue_by_currency} note="Platform-wide active, trial and non-renewing subscriptions; not filtered by the table. No currency conversion is assumed." />}
+    <section className={styles.panel} aria-label="Pending and failed payments">
+      <div className={styles.panelHeading}><div><h2><CreditCard size={17} aria-hidden="true" /> Pending and failed payments</h2><p>Paystack checkouts that are open or closed within the last 7 days. A verification never charges the customer.</p></div></div>
+      {pendingError && <Alert tone="danger" title="Payment checks unavailable">{pendingError}</Alert>}
+      <DataTable columns={checkoutColumns} rows={pendingRows} loading={loading} minWidth={1050} actions={canManage ? checkoutRowActions : undefined} empty={<p className={styles.note}>No pending, failed or review-required checkouts.</p>} />
+    </section>
     <section className={styles.panel}>
       <form className={styles.filters} onSubmit={(event) => { event.preventDefault(); change({ ...draft, limit: query.limit, page: 1 }) }}>
         <TextField className={styles.search} label="Search subscriptions" placeholder="Organisation, plan, owner or reference" value={draft.search} onChange={(event) => setDraft((old) => ({ ...old, search: event.target.value }))} />
@@ -109,6 +191,45 @@ export default function PlatformSubscriptions() {
         {data && <Pagination page={pg.page} limit={pg.limit} total={pg.total} totalPages={pg.totalPages} disabled={loading} noun="subscriptions" onPageChange={(page) => change({ ...query, page })} onLimitChange={(limit) => change({ ...query, limit, page: 1 })} />}
       </>}
     </section>
+    <ConfirmDialog
+      open={Boolean(checkoutConfirm)}
+      title="Close an expired checkout as unpaid?"
+      message="Only continue after you have checked the exact reference in the Paystack dashboard and confirmed no charge exists. DigitalInvoice cannot revoke an old Paystack payment link; any later charge must still be reconciled. An audit record will be created."
+      confirmLabel="I checked Paystack — continue" variant="danger"
+      onConfirm={() => { beginReview('close', checkoutConfirm); setCheckoutConfirm(null) }}
+      onClose={() => setCheckoutConfirm(null)}
+    />
+    <Modal
+      open={Boolean(reviewEditor)}
+      title={reviewEditor?.kind === 'close' ? 'Record unpaid checkout closure'
+        : reviewEditor?.kind === 'refunded' ? 'Record a completed Paystack refund'
+        : reviewEditor?.kind === 'credited' ? 'Apply the payment as a subscription credit'
+        : 'Dismiss duplicate-payment review'}
+      description="The action is permission-controlled and recorded in the platform activity log."
+      onClose={() => !reviewBusy && setReviewEditor(null)} busy={reviewBusy}
+      footer={<><Button variant="secondary" disabled={reviewBusy} onClick={() => setReviewEditor(null)}>Cancel</Button>
+        <Button variant={reviewEditor?.kind === 'close' ? 'danger' : 'primary'} loading={reviewBusy}
+          disabled={reviewNote.trim().length < 10 || (['close', 'refunded'].includes(reviewEditor?.kind) && !reviewConfirmed)}
+          onClick={resolveReview}>Confirm action</Button></>}
+    >
+      {reviewEditor?.kind === 'credited' && reviewEditor.payment.credit_preview ? (
+        <div className={styles.reviewSummary}>
+          <strong>Credit preview — {reviewEditor.payment.credit_preview.days} days</strong>
+          <span>Current period will extend to {date(reviewEditor.payment.credit_preview.new_period_end)}.</span>
+          <small>Calculated proportionally from the received amount and the active plan's price and billing interval. The server recalculates before applying.</small>
+        </div>
+      ) : null}
+      {reviewEditor?.kind === 'refunded' ? <p className={styles.note}>Complete the actual refund in Paystack first. This action only marks the record; it does not send money to the customer.</p> : null}
+      <Textarea label={reviewEditor?.kind === 'refunded' ? 'Refund details / Paystack refund reference' : 'Reason / audit note'} rows={3}
+        required value={reviewNote} onChange={(e) => setReviewNote(e.target.value)}
+        hint="At least 10 characters; visible to the platform audit trail." />
+      {['close', 'refunded'].includes(reviewEditor?.kind) ? <label className={styles.reviewCheck}>
+        <input type="checkbox" checked={reviewConfirmed} onChange={(e) => setReviewConfirmed(e.target.checked)} />
+        <span>{reviewEditor?.kind === 'close'
+          ? 'I checked Paystack and confirmed this checkout is unpaid.'
+          : 'I already completed this refund in Paystack.'}</span>
+      </label> : null}
+    </Modal>
     <ConfirmDialog open={Boolean(confirm)} title={confirm === 'sync' ? 'Synchronize expired subscriptions?' : 'Send subscription reminders?'} message={confirm === 'sync' ? 'Check expired billing periods, update subscription statuses and possibly restrict client workspace access. This action is audited.' : 'Run the subscription notification sweep. Eligible recipients may receive reminder emails; repeat notices are de-duplicated by the backend.'} confirmLabel={confirm === 'sync' ? 'Run expiry sync' : 'Send eligible reminders'} loading={busy} variant={confirm === 'sync' ? 'danger' : 'primary'} onConfirm={action} onClose={() => !busy && setConfirm('')} />
     {confirm && actionError && <Alert tone="danger">{actionError}</Alert>}
   </main>

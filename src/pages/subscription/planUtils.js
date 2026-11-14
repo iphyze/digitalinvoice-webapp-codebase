@@ -54,12 +54,17 @@ export const buttonLabelForVariant = (access, subscription, variant, canManageSu
   return `Subscribe ${interval}`
 }
 
-export const initialIntervals = (plans, subscription) => plans.reduce((state, plan) => {
+export const initialIntervals = (plans, subscription, pendingPayment = null) => plans.reduce((state, plan) => {
   const map = intervalMapForPlan(plan)
   const key = plan.tier || plan.code
   const currentVariant = (plan.intervals || []).find((variant) => Number(variant.id) === Number(subscription?.plan_id))
+  // A resumable Paystack checkout takes precedence so its badge and Resume
+  // button are visible immediately, without first selecting Yearly manually.
+  const pendingVariant = pendingPayment?.status === 'pending' && !pendingPayment?.closed_reason
+    ? (plan.intervals || []).find((variant) => variant.code === pendingPayment.plan_code)
+    : null
   return {
     ...state,
-    [key]: currentVariant?.billing_interval || (map.monthly ? 'monthly' : (plan.billing_interval === 'custom' ? 'monthly' : (plan.billing_interval || 'monthly'))),
+    [key]: pendingVariant?.billing_interval || currentVariant?.billing_interval || (map.monthly ? 'monthly' : (plan.billing_interval === 'custom' ? 'monthly' : (plan.billing_interval || 'monthly'))),
   }
 }, {})

@@ -34,13 +34,21 @@ const fromSettings = (settings) => ({
   payment_instructions: settings?.payment_instructions || '',
 })
 
-export default function InvoiceSettingsStep({ settings, completed, onSaved, onBack, progressLabel }) {
+export default function InvoiceSettingsStep({ settings, completed, onSaved, onDirtyChange, onBusyChange, onBack, progressLabel }) {
   const showToast = useToastStore((s) => s.showToast)
   const [form, setForm] = useState(() => fromSettings(settings))
   const [errors, setErrors] = useState({})
   const [saving, setSaving] = useState(false)
 
   useEffect(() => setForm(fromSettings(settings)), [settings])
+
+  useEffect(() => {
+    onDirtyChange?.(JSON.stringify(form) !== JSON.stringify(fromSettings(settings)))
+  }, [form, settings, onDirtyChange])
+  useEffect(() => {
+    onBusyChange?.(saving)
+    return () => onBusyChange?.(false)
+  }, [saving, onBusyChange])
 
   const update = (name, value) => {
     setForm((current) => ({ ...current, [name]: value }))

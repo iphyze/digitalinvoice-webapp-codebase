@@ -44,13 +44,21 @@ const fromProfile = (profile) => ({
   nrs_lga_code: profile?.nrs_lga_code || '',
 })
 
-export default function ComplianceProfileStep({ profile, completed, onSaved, onBack, progressLabel }) {
+export default function ComplianceProfileStep({ profile, completed, onSaved, onDirtyChange, onBusyChange, onBack, progressLabel }) {
   const showToast = useToastStore((s) => s.showToast)
   const [form, setForm] = useState(() => fromProfile(profile))
   const [errors, setErrors] = useState({})
   const [saving, setSaving] = useState(false)
 
   useEffect(() => setForm(fromProfile(profile)), [profile])
+
+  useEffect(() => {
+    onDirtyChange?.(JSON.stringify(form) !== JSON.stringify(fromProfile(profile)))
+  }, [form, profile, onDirtyChange])
+  useEffect(() => {
+    onBusyChange?.(saving)
+    return () => onBusyChange?.(false)
+  }, [saving, onBusyChange])
 
   const update = (name, value) => {
     setForm((current) => ({ ...current, [name]: value }))

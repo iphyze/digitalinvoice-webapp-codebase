@@ -9,6 +9,7 @@ import GoogleSignInButton from '../../components/forms/GoogleSignInButton'
 import MfaSignInChallenge from '../../components/security/MfaSignInChallenge'
 import useAuthStore from '../../stores/useAuthStore'
 import useToastStore from '../../stores/useToastStore'
+import { hasSavedOnboardingProgress } from '../../utils/onboardingResume'
 import {
   firstError, removeFieldError, validateRegistrationForm, validateRequired,
 } from '../../utils/validation'
@@ -168,7 +169,9 @@ export default function Register() {
 
   const finishMfa = (result) => {
     setMfaChallenge(null)
-    showToast('Multi-factor verification complete.', 'success', 'Welcome back')
+    if (!(result.redirectTo?.startsWith('/onboarding') && hasSavedOnboardingProgress(useAuthStore.getState().onboarding))) {
+      showToast('Multi-factor verification complete.', 'success', 'Welcome back')
+    }
     navigate(result.redirectTo, { replace: true })
   }
 

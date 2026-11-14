@@ -32,13 +32,21 @@ const fromProfile = (profile, organization) => ({
   country: profile?.country || 'NG',
 })
 
-export default function BusinessProfileStep({ profile, organization, completed, onSaved, progressLabel }) {
+export default function BusinessProfileStep({ profile, organization, completed, onSaved, onDirtyChange, onBusyChange, progressLabel }) {
   const showToast = useToastStore((s) => s.showToast)
   const [form, setForm] = useState(() => fromProfile(profile, organization))
   const [errors, setErrors] = useState({})
   const [saving, setSaving] = useState(false)
 
   useEffect(() => setForm(fromProfile(profile, organization)), [profile, organization])
+
+  useEffect(() => {
+    onDirtyChange?.(JSON.stringify(form) !== JSON.stringify(fromProfile(profile, organization)))
+  }, [form, profile, organization, onDirtyChange])
+  useEffect(() => {
+    onBusyChange?.(saving)
+    return () => onBusyChange?.(false)
+  }, [saving, onBusyChange])
 
   const update = (name, value) => {
     setForm((current) => ({ ...current, [name]: value }))

@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { ArrowRight, CircleCheck, TriangleAlert } from 'lucide-react'
+import { ArrowRight, CircleCheck, RefreshCw, TriangleAlert } from 'lucide-react'
 import Button from '../../components/ui/Button'
 import PageLoader from '../../components/ui/PageLoader'
 import subscriptionService from '../../services/subscriptionService'
@@ -22,25 +22,34 @@ export default function VerifyPayment() {
   const started = useRef(false)
   const [result, setResult] = useState({ state: 'loading', message: 'Confirming your subscription payment...' })
 
+  const reference = params.get('reference') || params.get('trxref')
+  const checkPayment = useCallback(async () => {
+    if (!reference) {
+      setResult({ state: 'error', message: 'Payment reference was not provided.' })
+      return
+    }
+    setResult({ state: 'loading', message: 'Confirming your subscription payment...' })
+    try {
+      const response = await subscriptionService.verify(reference)
+      await refreshSessionState()
+      setResult({ state: 'success', message: response?.data?.message || 'Payment verified. Your subscription is active and setup can begin.' })
+    } catch (error) {
+      const isGatewayUnavailable = error?.response?.status === 502
+      setResult({
+        state: 'error',
+        message: isGatewayUnavailable
+          ? "We couldn't reach the payment provider. Your payment is safe; try again in a moment."
+          : getErrorMessage(error, 'Payment verification was unsuccessful.'),
+        errorId: error?.response?.data?.error_id || null,
+      })
+    }
+  }, [reference, refreshSessionState])
+
   useEffect(() => {
     if (started.current) return
     started.current = true
-    const verify = async () => {
-      const reference = params.get('reference') || params.get('trxref')
-      if (!reference) {
-        setResult({ state: 'error', message: 'Payment reference was not provided.' })
-        return
-      }
-      try {
-        await subscriptionService.verify(reference)
-        await refreshSessionState()
-        setResult({ state: 'success', message: 'Payment verified. Your subscription is active and setup can begin.' })
-      } catch (error) {
-        setResult({ state: 'error', message: getErrorMessage(error, 'Payment verification was unsuccessful.') })
-      }
-    }
-    verify()
-  }, [params, refreshSessionState])
+    void checkPayment()
+  }, [checkPayment])
 
   if (result.state === 'loading') return <PageLoader message="Confirming your secure Paystack subscription..." />
 
@@ -60,10 +69,14 @@ export default function VerifyPayment() {
           <p className={styles.resultEyebrow}>{success ? 'Payment confirmed' : 'Payment not confirmed'}</p>
           <h1 className={styles.resultTitle}>Subscription payment</h1>
           <p className={styles.resultMessage}>{result.message}</p>
+          {result.errorId ? <p className={styles.resultErrorId}>Error ID: <code>{result.errorId}</code></p> : null}
           {success ? (
             <Button size="lg" iconRight={ArrowRight} onClick={() => navigate(nextPath(), { replace: true })}>Continue setup</Button>
           ) : (
-            <Button size="lg" variant="secondary" onClick={() => navigate('/subscription/plans')}>Return to plans</Button>
+            <div className={styles.resultActions}>
+              <Button size="lg" icon={RefreshCw} onClick={checkPayment} disabled={!reference}>Check again</Button>
+              <Button size="lg" variant="secondary" onClick={() => navigate('/subscription/plans')}>Return to plans</Button>
+            </div>
           )}
         </section>
       </main>

@@ -8,6 +8,7 @@ import Switch from '../../../components/forms/Switch'
 import onboardingService from '../../../services/onboardingService'
 import useToastStore from '../../../stores/useToastStore'
 import { getErrorMessage } from '../../../utils/httpError'
+import { hasBankAccountDraft } from '../../../utils/onboardingResume'
 import { removeFieldError, validateBankAccountForm } from '../../../utils/validation'
 import { CURRENCIES } from './InvoiceSettingsStep'
 import { StepActions, StepHeader } from './StepParts'
@@ -15,24 +16,33 @@ import styles from '../Onboarding.module.css'
 
 const INITIAL = { bank_name: '', account_name: '', account_number: '', currency: 'NGN', is_default: true }
 
-export default function BankAccountStep({ accounts = [], onAccountsChanged, onBack, onContinue, progressLabel }) {
+export default function BankAccountStep({ accounts = [], onAccountsChanged, onDirtyChange, onBusyChange, onBack, onContinue, progressLabel }) {
   const showToast = useToastStore((s) => s.showToast)
-  const [form, setForm] = useState(INITIAL)
+  const [form, setForm] = useState(() => ({ ...INITIAL, is_default: accounts.length === 0 }))
   const [errors, setErrors] = useState({})
   const [saving, setSaving] = useState(false)
   const [removing, setRemoving] = useState(null)
 
   useEffect(() => {
-    if (accounts.length) setForm((current) => ({ ...current, is_default: false }))
+    setForm((current) => ({ ...current, is_default: accounts.length === 0 }))
   }, [accounts.length])
+
+  useEffect(() => {
+    onDirtyChange?.(JSON.stringify(form) !== JSON.stringify({ ...INITIAL, is_default: accounts.length === 0 }))
+  }, [form, accounts.length, onDirtyChange])
+  useEffect(() => {
+    onBusyChange?.(saving || removing !== null)
+    return () => onBusyChange?.(false)
+  }, [saving, removing, onBusyChange])
 
   const update = (name, value) => {
     setForm((current) => ({ ...current, [name]: value }))
     setErrors((current) => removeFieldError(current, name))
   }
 
-  const save = async (event) => {
-    event.preventDefault()
+  const save = async (event, continueAfterSave = false) => {
+    event?.preventDefault()
+    if (saving || removing !== null) return
     const validationErrors = validateBankAccountForm(form)
     if (Object.keys(validationErrors).length) {
       setErrors(validationErrors)
@@ -46,10 +56,20 @@ export default function BankAccountStep({ accounts = [], onAccountsChanged, onBa
       onAccountsChanged(bankAccounts)
       setForm({ ...INITIAL, is_default: bankAccounts.length === 0 })
       showToast('Payment account added successfully.', 'success', 'Account saved')
+      if (continueAfterSave) onContinue()
     } catch (error) {
       showToast(getErrorMessage(error, 'Unable to add payment account.'), 'error', 'Unable to save account')
     } finally {
       setSaving(false)
+    }
+  }
+
+  const continueToReview = () => {
+    if (saving || removing !== null) return
+    if (hasBankAccountDraft(form)) {
+      void save(undefined, true)
+    } else {
+      onContinue()
     }
   }
 
@@ -110,7 +130,7 @@ export default function BankAccountStep({ accounts = [], onAccountsChanged, onBa
       </form>
 
       <StepActions progressLabel={progressLabel} onBack={onBack}>
-        <Button size="lg" iconRight={ArrowRight} onClick={onContinue}>Continue to review</Button>
+        <Button size="lg" iconRight={ArrowRight} onClick={continueToReview} disabled={saving || removing !== null}>Continue to review</Button>
       </StepActions>
     </div>
   )

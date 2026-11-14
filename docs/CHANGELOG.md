@@ -610,3 +610,32 @@ Two independent causes, both reproduced against the real code and fixed:
 ### Verification
 - `node --check` passed for both changed JavaScript files. An isolated request-interceptor harness passed: concurrent POSTs share one CSRF bootstrap, public authentication remains CSRF-exempt, and a stale CSRF token is refreshed and retried once.
 - `npm ci --offline` could not fetch a missing dependency, and a subsequent install attempt timed out, so `npm run build` and `npm run lint` could not be completed. Live PHP/API, Paystack redirect and browser end-to-end checks remain unverified.
+
+## 2026-11-14 — Payments/onboarding brief · Task 1: Paystack verification retry
+
+- `src/pages/subscription/VerifyPayment.jsx`: kept the existing Paystack return card and loader; when verification fails, the user can **Check again** (re-uses the same reference with loading), or **Return to plans**. Backend `error_id` is shown when supplied. Temporary provider errors (HTTP 502) have the friendly provider-unavailable explanation. A success refreshes the session before **Continue setup**.
+- `src/pages/subscription/Plans.module.css`: responsive, token-based side-by-side retry/return actions and readable error-ID text. No plan-card, onboarding, route, store, token, or API-service behaviour was changed in Task 1.
+- JSX parsing checked; full Vite production build not executed in this environment because the frontend dependencies are not installed.
+
+## 2026-11-14 — Payments/onboarding brief · Task 2: Pause and resume onboarding
+- Shared sign-out action in the onboarding and subscription headers, next to the existing theme toggle. Text appears on desktop and icon-only with an accessible label on mobile. Uses the unchanged auth-store sign-out route and success toast.
+- The existing `ConfirmDialog` warns before sign-out if the current onboarding form has unsaved changes; form-save operations disable sign-out until the request finishes. Saved server progress is never deleted.
+- Business, invoice defaults, compliance and optional bank details report unsaved edits. Nonempty bank draft fields are validated and persisted on “Continue to review”; a blank optional bank step can still be skipped.
+- Onboarding reloads the saved profile/settings/compliance/bank-account records and opens the server-provided next required step. Completed items remain marked in the stepper; returning users see a dismissible saved-progress message. Password, Google and MFA sign-ins all use the same secure redirect decision.
+- Plan and payment-verification pages now allow sign-out. On reauthentication, an active paid workspace resumes setup or dashboard while a pending/failed subscription returns to plans. Recovering a previously open Paystack checkout URL is reserved for Task 3.
+- Added `tests/onboarding_resume.test.mjs`. No NRS or payment flows were changed in this batch.
+
+
+## 2026-11-14 — Task 3: resumable pending/failed subscription payments
+
+- Plans page displays an active subscription separately from pending Paystack checkouts. Added Check status, Resume, Cancel and Try again controls using existing Alert, Button, ConfirmDialog and StatusBadge components; disabled other checkout buttons during in-flight operations.
+- Platform Subscriptions displays Pending and failed payments with re-verification (billing manage permission), using the existing DataTable and tokenized cards.
+- Added corresponding API service functions; no new packages, theme tokens or monetary arithmetic.
+- Backend migration/API must deploy before this UI; test Paystack sandbox and responsive light/dark modes.
+
+### 2026-11-14 — Subscription payment exception handling polish
+
+- Open each pending plan on its actual saved billing interval, showing Payment pending and Resume payment immediately.
+- Remove the duplicate sign-in "Welcome back" toast when the existing onboarding resume banner appears.
+- Show a calm extra-payment notice when billing staff are reviewing a late confirmed charge.
+- Add platform billing review badges, an audited manual closure flow and refund/credit/dismiss dialogs using existing Modal, ConfirmDialog, Textarea, Button and DataTable components; preview the pro-rata subscription extension before confirmation.

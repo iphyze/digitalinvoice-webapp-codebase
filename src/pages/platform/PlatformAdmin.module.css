@@ -47,3 +47,12 @@
 .srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 @media (max-width: 850px) { .grid { grid-template-columns: 1fr; } }
 @media (max-width: 650px) { .formGrid, .details { grid-template-columns: 1fr; } .panel { padding: 14px; } .filters > * { flex: 1 1 100%; } .filters > button { flex: 0 0 auto; } .entries li { flex-wrap: wrap; } .entryAside { justify-items: start; text-align: left; } }
+
+/* Payment exception controls reuse the existing billing panel and modal tokens. */
+.checkoutActions { display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center; }
+.reviewStatus { display: grid; gap: 0.35rem; max-width: 230px; }
+.reviewStatus small { color: var(--color-ink-muted); line-height: 1.4; }
+.reviewSummary { display: grid; gap: 0.4rem; padding: 0.9rem 1rem; border: 1px solid var(--color-line); border-radius: 12px; background: var(--color-surface-sunken); margin-bottom: 1rem; }
+.reviewSummary span, .reviewSummary small { color: var(--color-ink-muted); }
+.reviewCheck { display: flex; align-items: flex-start; gap: 0.65rem; margin-top: 0.9rem; line-height: 1.5; font-size: 0.86rem; color: var(--color-ink); cursor: pointer; }
+.reviewCheck input { margin-top: 0.2rem; flex: none; accent-color: var(--color-primary); }
